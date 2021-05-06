@@ -2,14 +2,20 @@ package com.greengecko.ytplayer;
 
 import android.app.TabActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TabHost;
 
-import java.util.List;
+import java.util.ArrayList;
+
 
 public class MainActivity extends TabActivity {
-    TabHost host;
+    private TabHost host;
+    private GridView explore;
+    private ListView library;
+    private MediaAdapter adapter;
+
+    private ArrayList<Media> exploreItems, libraryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +28,11 @@ public class MainActivity extends TabActivity {
 
     private void init() {
         host = getTabHost();
+        explore = findViewById(R.id.explore);
+        library = findViewById(R.id.library);
+
+        exploreItems = new ArrayList<>();
+        libraryItems = new ArrayList<>();
 
         tabAdder(host, "HOME", "홈", R.id.tabHome);
         tabAdder(host, "EXPLORE", "탐색", R.id.tabExplore);
@@ -37,5 +48,28 @@ public class MainActivity extends TabActivity {
         TabHost.TabSpec tab = host.newTabSpec(tag).setIndicator(indicator);
         tab.setContent(viewId);
         host.addTab(tab);
+    }
+
+    public void rowAdder(String name, String author, int imageResID, int index) {
+        if((exploreItems.size() > 0 || libraryItems.size() > 0) && index == 0) {
+            exploreItems.clear();
+            libraryItems.clear();
+        }
+
+        if(host.getCurrentTab() == 1) {
+            exploreItems.add(new Media(name, author, imageResID));
+        } else if(host.getCurrentTab() == 2) {
+            libraryItems.add(new Media(name, author, imageResID));
+        }
+    }
+
+    public void rowPacker() {
+        if(host.getCurrentTab() == 1) {
+            adapter = new MediaAdapter(exploreItems, getApplicationContext());
+            explore.setAdapter(adapter);
+        } else if(host.getCurrentTab() == 2) {
+            adapter = new MediaAdapter(libraryItems, getApplicationContext());
+            library.setAdapter(adapter);
+        }
     }
 }
