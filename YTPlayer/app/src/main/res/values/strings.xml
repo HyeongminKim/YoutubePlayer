@@ -7,6 +7,12 @@
     <string name="ffmpeg">FFmpeg</string>
     <string name="ffmpegCopyright">GNU 라이선스</string>
     <string name="YTdl">youtube-dl</string>
+    <string name="visitGuide">"짧게 탭\n레파지토리 방문\n\n길게 탭\n레파지토리 라이선스를 확인"</string>
 
-    <string name="nowLoading">로드 중...</string>
+    <string name="nowLoading">로드 중…</string>
+
+    <string name="downloadMethod">가급적 셀룰러 데이터 절약하기</string>
+    <string name="encodeMethod">다운로드 완료시 다음으로 변환하기</string>
+    <string name="warnConvert">이 기능은 배터리 수명에 영향을 줄 수 있습니다. </string>
+    <string name="loadMethod">작업중 정보 표시 방법</string>
 </resources>

@@ -57,16 +57,37 @@ public class MainActivity extends TabActivity {
                 openWeb("https://github.com/HyeongminKim/YoutubePlayer");
             }
         });
+        visitDevSite.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openWeb("https://github.com/HyeongminKim/YoutubePlayer/blob/master/LICENSE");
+                return false;
+            }
+        });
         visitFFmpeg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openWeb("https://github.com/FFmpeg/FFmpeg");
             }
         });
+        visitFFmpeg.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openWeb("https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md");
+                return false;
+            }
+        });
         visitYoutubeDl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openWeb("https://github.com/ytdl-org/youtube-dl");
+            }
+        });
+        visitYoutubeDl.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openWeb("https://github.com/ytdl-org/youtube-dl/blob/master/LICENSE");
+                return false;
             }
         });
     }
