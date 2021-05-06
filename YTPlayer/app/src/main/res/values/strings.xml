@@ -1,8 +1,4 @@
 <resources>
     <string name="app_name">YT Player</string>
-    <string name="explore">탐색</string>
-    <string name="library">라이브러리</string>
-    <string name="setting">설정</string>
-    <string name="info">정보</string>
     <string name="copyright">Copyright © 2021 김형민. All rights reserved.</string>
 </resources>

@@ -1,61 +1,38 @@
 package com.greengecko.ytplayer;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
-import android.content.Intent;
+import android.app.TabActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
+import android.widget.TabHost;
 
-public class MainActivity extends AppCompatActivity {
-    Button explore, library, setting, info;
-    Intent transition;
+public class MainActivity extends TabActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
 
-        explore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        TabHost host = getTabHost();
 
-            }
-        });
+        tabAdder(host, "HOME", "홈", R.id.tabHome);
+        tabAdder(host, "EXPLORE", "탐색", R.id.tabExplore);
+        tabAdder(host, "LIBRARY", "라이브러리", R.id.tabLibrary);
+        tabAdder(host, "SETTING", "설정", R.id.tabSetting);
 
-        library.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        setting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        info.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-    }
-
-    private void action(Activity target) {
-        transition = new Intent(getApplicationContext(), Activity.class);
-        startActivity(transition);
+        host.setCurrentTab(0);
     }
 
     private void init() {
-        explore = findViewById(R.id.explore);
-        library = findViewById(R.id.library);
-        setting = findViewById(R.id.setting);
-        info = findViewById(R.id.info);
+
+    }
+
+    private void setAction() {
+
+    }
+
+    private void tabAdder(TabHost host, String tag, String indicator, int viewId) {
+        TabHost.TabSpec tab = host.newTabSpec(tag).setIndicator(indicator);
+        tab.setContent(viewId);
+        host.addTab(tab);
     }
 }
