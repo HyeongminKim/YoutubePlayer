@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">YT Player</string>
-    <string name="copyright">Copyright © 2021 김형민. All rights reserved.</string>
+    <string name="visitDevSite">이 앱의 GitHub 방문</string>
+
+    <string name="usedThirdParty">제 3자 프로그램과 라이선스</string>
+    <string name="ffmpeg">FFmpeg</string>
+    <string name="ffmpegCopyright">GNU 라이선스</string>
+    <string name="YTdl">youtube-dl</string>
+
     <string name="nowLoading">로드 중...</string>
 </resources>

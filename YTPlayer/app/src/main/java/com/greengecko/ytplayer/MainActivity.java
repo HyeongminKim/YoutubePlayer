@@ -1,7 +1,11 @@
 package com.greengecko.ytplayer;
 
 import android.app.TabActivity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -14,6 +18,7 @@ public class MainActivity extends TabActivity {
     private GridView explore;
     private ListView library;
     private MediaAdapter adapter;
+    private Button visitDevSite, visitFFmpeg, visitYoutubeDl;
 
     private ArrayList<Media> exploreItems, libraryItems;
 
@@ -30,6 +35,9 @@ public class MainActivity extends TabActivity {
         host = getTabHost();
         explore = findViewById(R.id.explore);
         library = findViewById(R.id.library);
+        visitDevSite = findViewById(R.id.visitDevSite);
+        visitFFmpeg = findViewById(R.id.visitFFmpeg);
+        visitYoutubeDl = findViewById(R.id.visitYTdl);
 
         exploreItems = new ArrayList<>();
         libraryItems = new ArrayList<>();
@@ -42,12 +50,36 @@ public class MainActivity extends TabActivity {
 
     private void setAction() {
         host.setCurrentTab(0);
+
+        visitDevSite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWeb("https://github.com/HyeongminKim/YoutubePlayer");
+            }
+        });
+        visitFFmpeg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWeb("https://github.com/FFmpeg/FFmpeg");
+            }
+        });
+        visitYoutubeDl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWeb("https://github.com/ytdl-org/youtube-dl");
+            }
+        });
     }
 
     private void tabAdder(TabHost host, String tag, String indicator, int viewId) {
         TabHost.TabSpec tab = host.newTabSpec(tag).setIndicator(indicator);
         tab.setContent(viewId);
         host.addTab(tab);
+    }
+
+    private void openWeb(String uri) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        startActivity(browserIntent);
     }
 
     public void rowAdder(String name, String author, int imageResID, int index) {
