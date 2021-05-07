@@ -5,7 +5,7 @@
 
     <string name="usedThirdParty">제 3자 프로그램과 라이선스</string>
     <string name="ffmpeg">FFmpeg</string>
-    <string name="ffmpegCopyright">GNU 라이선스</string>
+    <string name="ffmpegCopyright">LGPL version 2.1 or later</string>
     <string name="YTdl">youtube-dl</string>
     <string name="visitGuide">"짧게 탭\n레파지토리 방문\n\n길게 탭\n레파지토리 라이선스를 확인"</string>
 
