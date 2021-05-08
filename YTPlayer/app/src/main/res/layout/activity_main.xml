@@ -43,8 +43,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAllCaps="false"
-                    android:layout_marginBottom="50dp"
                     android:text="@string/visitDevSite" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="50dp"
+                    android:text="@string/appCopyright" />
 
                 <TextView
                     android:layout_width="wrap_content"
