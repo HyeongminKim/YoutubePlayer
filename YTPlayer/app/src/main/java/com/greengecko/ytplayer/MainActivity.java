@@ -18,7 +18,7 @@ public class MainActivity extends TabActivity {
     private GridView explore;
     private ListView library;
     private MediaAdapter adapter;
-    private Button visitDevSite, visitFFmpeg, visitYoutubeDl;
+    private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
 
     private ArrayList<Media> exploreItems, libraryItems;
 
@@ -38,6 +38,7 @@ public class MainActivity extends TabActivity {
         visitDevSite = findViewById(R.id.visitDevSite);
         visitFFmpeg = findViewById(R.id.visitFFmpeg);
         visitYoutubeDl = findViewById(R.id.visitYTdl);
+        visitDependence = findViewById(R.id.visitDependence);
 
         exploreItems = new ArrayList<>();
         libraryItems = new ArrayList<>();
@@ -87,6 +88,19 @@ public class MainActivity extends TabActivity {
             @Override
             public boolean onLongClick(View v) {
                 openWeb("https://github.com/ytdl-org/youtube-dl/blob/master/LICENSE");
+                return false;
+            }
+        });
+        visitDependence.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWeb("https://github.com/bawaviki/youtube-dl-android");
+            }
+        });
+        visitDependence.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openWeb("https://github.com/bawaviki/youtube-dl-android/blob/master/LICENSE");
                 return false;
             }
         });

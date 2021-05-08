@@ -7,6 +7,8 @@
     <string name="ffmpeg">FFmpeg</string>
     <string name="ffmpegCopyright">LGPL version 2.1 or later</string>
     <string name="YTdl">youtube-dl</string>
+    <string name="visitDependence">의존성 패키지 GitHub 방문</string>
+    <string name="dependenceCopyright">GPL version 3.0</string>
     <string name="visitGuide">"짧게 탭\n레파지토리 방문\n\n길게 탭\n레파지토리 라이선스를 확인"</string>
 
     <string name="nowLoading">로드 중…</string>

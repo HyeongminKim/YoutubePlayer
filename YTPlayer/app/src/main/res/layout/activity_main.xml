@@ -43,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAllCaps="false"
-                    android:layout_marginBottom="90dp"
+                    android:layout_marginBottom="50dp"
                     android:text="@string/visitDevSite" />
 
                 <TextView
@@ -66,10 +66,21 @@
                 <Button
                     android:id="@+id/visitYTdl"
                     android:textAllCaps="false"
-                    android:layout_marginBottom="50dp"
+                    android:layout_marginBottom="25dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/YTdl" />
+                <Button
+                    android:id="@+id/visitDependence"
+                    android:textAllCaps="false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/visitDependence" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="50dp"
+                    android:text="@string/dependenceCopyright" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
