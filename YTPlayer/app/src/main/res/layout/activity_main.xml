@@ -96,20 +96,40 @@
                 android:id="@+id/tabExplore"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
-                <GridView
-                    android:id="@+id/explore"
-                    android:numColumns="3"
+                android:layout_margin="30dp"
+                android:orientation="vertical"
+                android:gravity="center">
+                <EditText
+                    android:id="@+id/exploreInput"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_marginBottom="10dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/exploreHint"/>
+                <TextView
+                    android:text="@string/copyright"
+                    android:textColor="#FFA400"
+                    android:textAlignment="center"
+                    android:layout_marginBottom="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:text="@string/copyLimited"
+                    android:textStyle="bold"
+                    android:textColor="#FFA400"
+                    android:textAlignment="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/tabLibrary"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical" >
-                <ListView
+                <GridView
                     android:id="@+id/library"
+                    android:numColumns="3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </LinearLayout>

@@ -12,6 +12,10 @@
     <string name="dependenceCopyright">GPL version 3.0</string>
     <string name="visitGuide">"짧게 탭\n레파지토리 방문\n\n길게 탭\n레파지토리 라이선스를 확인"</string>
 
+    <string name="exploreHint">여기에 미디어 URL 입력</string>
+    <string name="copyright">저작권 보호를 위해 기기의 일부 기능이 앱 내에서 제한되었으며\n재생 시 원본이 존재하지 않을 경우 이를 중단할 수 있음</string>
+    <string name="copyLimited">제한된 기능: 화면 캡쳐, 화면 기록, 외부 앱 또는 디바이스에서 파일 읽기 권한</string>
+
     <string name="nowLoading">로드 중…</string>
 
     <string name="downloadMethod">가급적 셀룰러 데이터 절약하기</string>

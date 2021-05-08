@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TabHost;
 
 import java.util.ArrayList;
@@ -15,12 +15,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends TabActivity {
     private TabHost host;
-    private GridView explore;
-    private ListView library;
+    private GridView library;
     private MediaAdapter adapter;
     private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
 
-    private ArrayList<Media> exploreItems, libraryItems;
+    private ArrayList<Media> libraryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +32,12 @@ public class MainActivity extends TabActivity {
 
     private void init() {
         host = getTabHost();
-        explore = findViewById(R.id.explore);
         library = findViewById(R.id.library);
         visitDevSite = findViewById(R.id.visitDevSite);
         visitFFmpeg = findViewById(R.id.visitFFmpeg);
         visitYoutubeDl = findViewById(R.id.visitYTdl);
         visitDependence = findViewById(R.id.visitDependence);
 
-        exploreItems = new ArrayList<>();
         libraryItems = new ArrayList<>();
 
         tabAdder(host, "HOME", "홈", R.id.tabHome);
@@ -51,6 +48,19 @@ public class MainActivity extends TabActivity {
 
     private void setAction() {
         host.setCurrentTab(0);
+
+        host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                String tabTag = getTabHost().getCurrentTabTag();
+
+                if(tabTag.equals("HOME") || tabTag.equals("SETTING")) {
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+                } else {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+                }
+            }
+        });
 
         visitDevSite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,25 +128,15 @@ public class MainActivity extends TabActivity {
     }
 
     public void rowAdder(String name, String author, int imageResID, int index) {
-        if((exploreItems.size() > 0 || libraryItems.size() > 0) && index == 0) {
-            exploreItems.clear();
+        if(libraryItems.size() > 0 && index == 0) {
             libraryItems.clear();
         }
 
-        if(host.getCurrentTab() == 1) {
-            exploreItems.add(new Media(name, author, imageResID));
-        } else if(host.getCurrentTab() == 2) {
-            libraryItems.add(new Media(name, author, imageResID));
-        }
+        libraryItems.add(new Media(name, author, imageResID));
     }
 
     public void rowPacker() {
-        if(host.getCurrentTab() == 1) {
-            adapter = new MediaAdapter(exploreItems, getApplicationContext());
-            explore.setAdapter(adapter);
-        } else if(host.getCurrentTab() == 2) {
-            adapter = new MediaAdapter(libraryItems, getApplicationContext());
-            library.setAdapter(adapter);
-        }
+        adapter = new MediaAdapter(libraryItems, getApplicationContext());
+        library.setAdapter(adapter);
     }
 }
