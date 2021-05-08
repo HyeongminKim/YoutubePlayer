@@ -10,11 +10,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MediaAdapter extends BaseAdapter {
-    private ArrayList<Media> items;
+public class ContentsDropdownAdapter extends BaseAdapter {
+    private ArrayList<ContentsDropdown> items;
     private Context context;
 
-    public MediaAdapter(ArrayList<Media> items, Context context) {
+    public ContentsDropdownAdapter(ArrayList<ContentsDropdown> items, Context context) {
         this.items = items;
         this.context = context;
     }

@@ -16,10 +16,10 @@ import java.util.ArrayList;
 public class MainActivity extends TabActivity {
     private TabHost host;
     private GridView library;
-    private MediaAdapter adapter;
+    private ContentsDropdownAdapter adapter;
     private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
 
-    private ArrayList<Media> libraryItems;
+    private ArrayList<ContentsDropdown> libraryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,11 +132,11 @@ public class MainActivity extends TabActivity {
             libraryItems.clear();
         }
 
-        libraryItems.add(new Media(name, author, imageResID));
+        libraryItems.add(new ContentsDropdown(name, author, imageResID));
     }
 
     public void rowPacker() {
-        adapter = new MediaAdapter(libraryItems, getApplicationContext());
+        adapter = new ContentsDropdownAdapter(libraryItems, getApplicationContext());
         library.setAdapter(adapter);
     }
 }

@@ -1,11 +1,11 @@
 package com.greengecko.ytplayer;
 
-public class Media {
+public class ContentsDropdown {
     private String name;
     private String author;
     private int resId;
 
-    public Media(String name, String author, int resId) {
+    public ContentsDropdown(String name, String author, int resId) {
         this.name = name;
         this.author = author;
         this.resId = resId;
