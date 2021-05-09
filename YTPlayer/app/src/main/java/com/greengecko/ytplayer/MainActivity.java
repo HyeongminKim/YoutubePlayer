@@ -1,16 +1,44 @@
 package com.greengecko.ytplayer;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.TabActivity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.TabHost;
+import android.widget.TextView;
+import android.widget.Toast;
 
+
+import androidx.core.app.ActivityCompat;
+
+import com.yausername.ffmpeg.FFmpeg;
+import com.yausername.youtubedl_android.DownloadProgressCallback;
+import com.yausername.youtubedl_android.YoutubeDL;
+import com.yausername.youtubedl_android.YoutubeDLException;
+import com.yausername.youtubedl_android.YoutubeDLRequest;
+
+import java.io.File;
 import java.util.ArrayList;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class MainActivity extends TabActivity {
@@ -18,6 +46,10 @@ public class MainActivity extends TabActivity {
     private GridView library;
     private ContentsDropdownAdapter adapter;
     private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
+    private TextView detail, downloadInfo;
+    private EditText exploreInput;
+    private ProgressBar downloadProgress;
+    private CompositeDisposable compositeDisposable;
 
     private ArrayList<ContentsDropdown> libraryItems;
 
@@ -30,8 +62,18 @@ public class MainActivity extends TabActivity {
         setAction();
     }
 
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
+    }
+
     private void init() {
         host = getTabHost();
+        exploreInput = findViewById(R.id.exploreInput);
+        detail = findViewById(R.id.detail);
+        downloadInfo = findViewById(R.id.downloadInfo);
+        downloadProgress = findViewById(R.id.downloadProgress);
         library = findViewById(R.id.library);
         visitDevSite = findViewById(R.id.visitDevSite);
         visitFFmpeg = findViewById(R.id.visitFFmpeg);
@@ -39,11 +81,32 @@ public class MainActivity extends TabActivity {
         visitDependence = findViewById(R.id.visitDependence);
 
         libraryItems = new ArrayList<>();
+        compositeDisposable = new CompositeDisposable();
 
         tabAdder(host, "HOME", "홈", R.id.tabHome);
         tabAdder(host, "EXPLORE", "탐색", R.id.tabExplore);
         tabAdder(host, "LIBRARY", "라이브러리", R.id.tabLibrary);
         tabAdder(host, "SETTING", "설정", R.id.tabSetting);
+
+        if(dependenceInitialize(getApplicationContext())) {
+            Toast.makeText(this, "라이브러리 초기화 성공", Toast.LENGTH_SHORT).show();
+        } else {
+            AlertDialog.Builder fatalError = new AlertDialog.Builder(getApplicationContext());
+            fatalError.setTitle("라이브러리를 초기화 예외");
+            fatalError.setMessage("의존성 패키지를 초기화할 수 없어 앱을 종료합니다. ");
+            fatalError.setPositiveButton("승인", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            });
+        }
+
+        new Thread() {
+            public void run() {
+                dependenceUpdate(getApplicationContext());
+            }
+        }.start();
     }
 
     private void setAction() {
@@ -59,6 +122,26 @@ public class MainActivity extends TabActivity {
                 } else {
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
                 }
+            }
+        });
+
+        exploreInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(exploreInput.getText().toString().isEmpty()) {
+                    detail.setVisibility(View.GONE);
+                    downloadInfo.setVisibility(View.GONE);
+                    downloadProgress.setVisibility(View.GONE);
+                    return false;
+                }
+
+                if(isStoragePermissionGranted()) {
+                    mediaDownloader(exploreInput.getText().toString());
+                } else {
+                    Toast.makeText(getApplicationContext(), "다운로드 경로에 접근 권한이 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+
+                return true;
             }
         });
 
@@ -139,4 +222,80 @@ public class MainActivity extends TabActivity {
         adapter = new ContentsDropdownAdapter(libraryItems, MainActivity.this);
         library.setAdapter(adapter);
     }
+
+    private boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    private boolean dependenceInitialize(Context context) {
+        try {
+            YoutubeDL.getInstance().init(context);
+            FFmpeg.getInstance().init(context);
+            return true;
+        } catch (YoutubeDLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void dependenceUpdate(Context context) {
+        try {
+            YoutubeDL.getInstance().updateYoutubeDL(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void mediaDownloader(String url) {
+        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "YT Player");
+        YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
+        request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
+
+        detail.setVisibility(View.VISIBLE);
+        downloadInfo.setVisibility(View.VISIBLE);
+        downloadProgress.setVisibility(View.VISIBLE);
+
+        try {
+            detail.setText(YoutubeDL.getInstance().getInfo(url).getTitle());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "미디어 정보 사용 불가", Toast.LENGTH_SHORT).show();
+            detail.setVisibility(View.GONE);
+        }
+
+        Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().execute(request, callback))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(youtubeDLResponse -> {
+                Toast.makeText(getApplicationContext(), "다운로드 성공", Toast.LENGTH_SHORT).show();
+                downloadInfo.setVisibility(View.GONE);
+                downloadProgress.setVisibility(View.GONE);
+            }, e -> {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "다운로드 실패", Toast.LENGTH_SHORT).show();
+            detail.setVisibility(View.GONE);
+            downloadInfo.setVisibility(View.GONE);
+            downloadProgress.setVisibility(View.GONE);
+        });
+        compositeDisposable.add(disposable);
+    }
+
+    private DownloadProgressCallback callback = new DownloadProgressCallback() {
+        @Override
+        public void onProgressUpdate(float progress, long etaInSeconds) {
+            runOnUiThread(() -> {
+                downloadProgress.setProgress((int) progress);
+                downloadInfo.setText(etaInSeconds + "초 남음");
+            });
+        }
+    };
 }
