@@ -104,13 +104,13 @@ public class MainActivity extends TabActivity {
         visitDependence.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openWeb("https://github.com/bawaviki/youtube-dl-android");
+                openWeb("https://github.com/yausername/youtubedl-android");
             }
         });
         visitDependence.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                openWeb("https://github.com/bawaviki/youtube-dl-android/blob/master/LICENSE");
+                openWeb("https://github.com/yausername/youtubedl-android/blob/master/LICENSE");
                 return false;
             }
         });
@@ -127,7 +127,7 @@ public class MainActivity extends TabActivity {
         startActivity(browserIntent);
     }
 
-    public void rowAdder(String name, String author, int imageResID, int index) {
+    private void rowAdder(String name, String author, int imageResID, int index) {
         if(libraryItems.size() > 0 && index == 0) {
             libraryItems.clear();
         }
@@ -135,8 +135,8 @@ public class MainActivity extends TabActivity {
         libraryItems.add(new ContentsDropdown(name, author, imageResID));
     }
 
-    public void rowPacker() {
-        adapter = new ContentsDropdownAdapter(libraryItems, getApplicationContext());
+    private void rowPacker() {
+        adapter = new ContentsDropdownAdapter(libraryItems, MainActivity.this);
         library.setAdapter(adapter);
     }
 }
