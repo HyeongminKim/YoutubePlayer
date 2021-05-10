@@ -14,6 +14,8 @@ import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -50,6 +52,7 @@ public class MainActivity extends TabActivity {
     private EditText exploreInput;
     private ProgressBar downloadProgress;
     private CompositeDisposable compositeDisposable;
+    private InputMethodManager inputMethod;
 
     private ArrayList<ContentsDropdown> libraryItems;
 
@@ -71,6 +74,7 @@ public class MainActivity extends TabActivity {
     private void init() {
         host = getTabHost();
         exploreInput = findViewById(R.id.exploreInput);
+        inputMethod = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         detail = findViewById(R.id.detail);
         downloadInfo = findViewById(R.id.downloadInfo);
         downloadProgress = findViewById(R.id.downloadProgress);
@@ -128,6 +132,10 @@ public class MainActivity extends TabActivity {
         exploreInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    inputMethod.hideSoftInputFromWindow(exploreInput.getWindowToken(), 0);
+                }
+
                 if(exploreInput.getText().toString().isEmpty()) {
                     detail.setVisibility(View.GONE);
                     downloadInfo.setVisibility(View.GONE);
