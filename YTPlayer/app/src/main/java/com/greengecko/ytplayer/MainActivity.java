@@ -93,7 +93,6 @@ public class MainActivity extends TabActivity {
         tabAdder(host, "HOME", "홈", R.id.tabHome);
         tabAdder(host, "EXPLORE", "탐색", R.id.tabExplore);
         tabAdder(host, "LIBRARY", "라이브러리", R.id.tabLibrary);
-        tabAdder(host, "SETTING", "설정", R.id.tabSetting);
 
         if(dependenceInitialize(getApplicationContext())) {
             Toast.makeText(this, "라이브러리 초기화 성공", Toast.LENGTH_SHORT).show();
@@ -132,7 +131,7 @@ public class MainActivity extends TabActivity {
             public void onTabChanged(String tabId) {
                 String tabTag = getTabHost().getCurrentTabTag();
 
-                if(tabTag.equals("HOME") || tabTag.equals("SETTING")) {
+                if(tabTag.equals("HOME")) {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
                 } else {
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
@@ -277,12 +276,8 @@ public class MainActivity extends TabActivity {
         for (File file : files) {
             libraryItems.add(file.getName());
         }
-        rowPacker();
-    }
 
-    private void rowPacker() {
         libraryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, libraryItems);
-
         library.setAdapter(libraryAdapter);
     }
 
