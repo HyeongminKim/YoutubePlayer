@@ -336,6 +336,8 @@ public class MainActivity extends TabActivity {
         YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
         request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
 
+        exploreInput.setFocusable(false);
+        exploreInput.setClickable(false);
         detail.setVisibility(View.VISIBLE);
         downloadInfo.setVisibility(View.VISIBLE);
         downloadProgress.setVisibility(View.VISIBLE);
@@ -355,12 +357,17 @@ public class MainActivity extends TabActivity {
                 Toast.makeText(getApplicationContext(), "다운로드 성공", Toast.LENGTH_SHORT).show();
                 downloadInfo.setVisibility(View.GONE);
                 downloadProgress.setVisibility(View.GONE);
+                exploreInput.setText(null);
+                exploreInput.setFocusable(true);
+                exploreInput.setClickable(true);
             }, e -> {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "다운로드 실패", Toast.LENGTH_SHORT).show();
-            detail.setVisibility(View.GONE);
-            downloadInfo.setVisibility(View.GONE);
-            downloadProgress.setVisibility(View.GONE);
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "다운로드 실패", Toast.LENGTH_SHORT).show();
+                detail.setVisibility(View.GONE);
+                downloadInfo.setVisibility(View.GONE);
+                downloadProgress.setVisibility(View.GONE);
+                exploreInput.setFocusable(true);
+                exploreInput.setClickable(true);
         });
         compositeDisposable.add(disposable);
     }
