@@ -32,6 +32,7 @@ import com.yausername.youtubedl_android.DownloadProgressCallback;
 import com.yausername.youtubedl_android.YoutubeDL;
 import com.yausername.youtubedl_android.YoutubeDLException;
 import com.yausername.youtubedl_android.YoutubeDLRequest;
+import com.yausername.youtubedl_android.mapper.VideoInfo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -271,6 +272,15 @@ public class MainActivity extends TabActivity {
         }
     }
 
+    private VideoInfo getMediaInfo(String url) {
+        try {
+            return YoutubeDL.getInstance().getInfo(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void mediaDownloader(String url) {
         File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "YT Player");
         YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
@@ -281,7 +291,7 @@ public class MainActivity extends TabActivity {
         downloadProgress.setVisibility(View.VISIBLE);
 
         try {
-            detail.setText(String.format("제목: %s\n업로더: %s", YoutubeDL.getInstance().getInfo(url).getTitle(), YoutubeDL.getInstance().getInfo(url).getUploader()));
+            detail.setText(String.format("제목: %s\n업로더: %s", getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader()));
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "미디어 정보 사용 불가", Toast.LENGTH_SHORT).show();
