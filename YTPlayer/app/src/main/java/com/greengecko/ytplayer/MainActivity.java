@@ -281,7 +281,7 @@ public class MainActivity extends TabActivity {
         downloadProgress.setVisibility(View.VISIBLE);
 
         try {
-            detail.setText(YoutubeDL.getInstance().getInfo(url).getTitle());
+            detail.setText(String.format("제목: %s\n업로더: %s", YoutubeDL.getInstance().getInfo(url).getTitle(), YoutubeDL.getInstance().getInfo(url).getUploader()));
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "미디어 정보 사용 불가", Toast.LENGTH_SHORT).show();
