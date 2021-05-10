@@ -98,10 +98,10 @@ public class MainActivity extends TabActivity {
             AlertDialog.Builder fatalError = new AlertDialog.Builder(MainActivity.this);
             fatalError.setTitle("라이브러리를 초기화 예외");
             fatalError.setMessage("의존성 패키지를 초기화할 수 없어 앱을 종료합니다. ");
-            fatalError.setNeutralButton("버그 제보", new DialogInterface.OnClickListener() {
+            fatalError.setNeutralButton("이슈 제보", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    openWeb("https://github.com/HyeongminKim/YoutubePlayer/issues/new");
+                    openWeb("https://github.com/HyeongminKim/YoutubePlayer/issues");
                     finish();
                 }
             });
