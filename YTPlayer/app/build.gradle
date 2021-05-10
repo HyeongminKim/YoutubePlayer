@@ -48,6 +48,7 @@ allprojects {
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'com.github.yausername.youtubedl-android:library:0.12.+'

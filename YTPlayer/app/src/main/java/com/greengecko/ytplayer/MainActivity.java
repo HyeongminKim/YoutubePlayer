@@ -170,8 +170,10 @@ public class MainActivity extends TabActivity {
 
         library.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //TODO: 미디어 플레이어 추가
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(getApplicationContext(), MediaPlayer.class);
+                intent.putExtra("src", getMediaDownloadPath().getPath() + "/" + libraryItems.get(position));
+                startActivity(intent);
             }
         });
         library.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
