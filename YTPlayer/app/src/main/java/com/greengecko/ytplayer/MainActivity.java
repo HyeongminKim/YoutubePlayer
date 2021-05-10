@@ -300,9 +300,20 @@ public class MainActivity extends TabActivity {
     private DownloadProgressCallback callback = new DownloadProgressCallback() {
         @Override
         public void onProgressUpdate(float progress, long etaInSeconds) {
+            int min = (int)etaInSeconds / 60;
+            int hour = min / 60;
+            int second = (int)etaInSeconds % 60;
+            int finalMin = min % 60;
+
             runOnUiThread(() -> {
                 downloadProgress.setProgress((int) progress);
-                downloadInfo.setText(etaInSeconds + "초 남음");
+                if(hour == 0 && finalMin == 0) {
+                    downloadInfo.setText(String.format("%d초 남음", second));
+                } else if(hour == 0) {
+                    downloadInfo.setText(String.format("%d분 %d초 남음", finalMin, second));
+                } else {
+                    downloadInfo.setText(String.format("%d시간 %d분 %d초 남음", hour, finalMin, second));
+                }
             });
         }
     };
