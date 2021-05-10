@@ -47,7 +47,7 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends TabActivity {
     private TabHost host;
     private GridView library;
-    private ContentsDropdownAdapter adapter;
+    private ContentsDetailAdapter adapter;
     private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
     private TextView detail, downloadInfo;
     private EditText exploreInput;
@@ -55,7 +55,7 @@ public class MainActivity extends TabActivity {
     private CompositeDisposable compositeDisposable;
     private InputMethodManager inputMethod;
 
-    private ArrayList<ContentsDropdown> libraryItems;
+    private ArrayList<ContentsDetail> libraryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,11 +232,11 @@ public class MainActivity extends TabActivity {
             libraryItems.clear();
         }
 
-        libraryItems.add(new ContentsDropdown(name, author, imageResID));
+        libraryItems.add(new ContentsDetail(name, author, imageResID));
     }
 
     private void rowPacker() {
-        adapter = new ContentsDropdownAdapter(libraryItems, MainActivity.this);
+        adapter = new ContentsDetailAdapter(libraryItems, MainActivity.this);
         library.setAdapter(adapter);
     }
 
