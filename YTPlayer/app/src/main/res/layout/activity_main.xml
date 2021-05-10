@@ -146,7 +146,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical" >
-                <GridView
+                <ListView
                     android:id="@+id/library"
                     android:numColumns="3"
                     android:layout_width="match_parent"

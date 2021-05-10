@@ -16,9 +16,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -46,8 +48,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends TabActivity {
     private TabHost host;
-    private GridView library;
-    private ContentsDetailAdapter adapter;
+    private ListView library;
+    private ArrayAdapter<String> libraryAdapter;
     private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
     private TextView detail, downloadInfo;
     private EditText exploreInput;
@@ -55,7 +57,7 @@ public class MainActivity extends TabActivity {
     private CompositeDisposable compositeDisposable;
     private InputMethodManager inputMethod;
 
-    private ArrayList<ContentsDetail> libraryItems;
+    private ArrayList<String> libraryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +137,10 @@ public class MainActivity extends TabActivity {
                 } else {
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
                 }
+
+                if(tabTag.equals("LIBRARY")) {
+                    rowAdder();
+                }
             }
         });
 
@@ -157,6 +163,41 @@ public class MainActivity extends TabActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "다운로드 경로에 접근 권한이 없습니다.", Toast.LENGTH_SHORT).show();
                 }
+
+                return true;
+            }
+        });
+
+        library.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //TODO: 미디어 플레이어 추가
+            }
+        });
+        library.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                AlertDialog.Builder deleteMedia = new AlertDialog.Builder(MainActivity.this);
+                deleteMedia.setTitle("선택된 미디어를 삭제하시겠습니까?");
+                deleteMedia.setMessage("이 동작은 되돌릴 수 없습니다. ");
+                deleteMedia.setNegativeButton("취소", null);
+                deleteMedia.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String deleteLocation = getMediaDownloadPath().getPath() + "/" + libraryItems.get(position);
+                        try {
+                            File path = new File(deleteLocation);
+                            if (path.exists()) {
+                                path.delete();
+                                rowAdder();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "선택된 미디어를 제거할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                deleteMedia.show();
 
                 return true;
             }
@@ -227,17 +268,20 @@ public class MainActivity extends TabActivity {
         startActivity(browserIntent);
     }
 
-    private void rowAdder(String name, String author, int imageResID, int index) {
-        if(libraryItems.size() > 0 && index == 0) {
-            libraryItems.clear();
+    private void rowAdder() {
+        File[] files = getMediaDownloadPath().listFiles();
+        if(files == null) return;
+        libraryItems.clear();
+        for (File file : files) {
+            libraryItems.add(file.getName());
         }
-
-        libraryItems.add(new ContentsDetail(name, author, imageResID));
+        rowPacker();
     }
 
     private void rowPacker() {
-        adapter = new ContentsDetailAdapter(libraryItems, MainActivity.this);
-        library.setAdapter(adapter);
+        libraryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, libraryItems);
+
+        library.setAdapter(libraryAdapter);
     }
 
     private boolean isStoragePermissionGranted() {
@@ -281,8 +325,12 @@ public class MainActivity extends TabActivity {
         }
     }
 
+    private File getMediaDownloadPath() {
+        return new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "YT Player");
+    }
+
     private void mediaDownloader(String url) {
-        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "YT Player");
+        File path = getMediaDownloadPath();
         YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
         request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
 
