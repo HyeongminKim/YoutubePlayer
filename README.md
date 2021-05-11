@@ -2,7 +2,7 @@
 안드로이드를 위한 오프라인 또는 스트리밍 지원 유튜브 플레이어
 
 ### 사용법
-- 사용법은 [위키](https://github.com/HyeongminKim/YoutubePlayer/wiki)를 참조하시기 바랍니다. 
+- 사용법은 [위키](https://github.com/HyeongminKim/YoutubePlayer/wiki/사용법)를 참조하시기 바랍니다. 
 
 ### 알려진 이슈
 - 현재 알려진 이슈는 [여기](https://github.com/HyeongminKim/YoutubePlayer/issues)에서 확인할 수 있습니다. 
