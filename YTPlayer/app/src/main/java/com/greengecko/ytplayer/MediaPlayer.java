@@ -16,11 +16,11 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 
 
 public class MediaPlayer extends AppCompatActivity {
-    PlayerView playerView;
-    SimpleExoPlayer player;
+    private PlayerView playerView;
+    private SimpleExoPlayer player;
 
-    Uri videoSrc;
-    Intent intent;
+    private Uri videoSrc;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
