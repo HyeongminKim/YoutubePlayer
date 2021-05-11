@@ -12,7 +12,7 @@
 - 기여해 주셔서 감사합니다. 
 
 ### 사용된 레파지토리
-##### 이러한 분들이 없었다면 이 앱을 제작할 시도조차 못 했을 겁니다. 
+##### 여기 나열된 레파지토리를 만드신 분들이 없었다면 이 앱을 제작할 시도조차 못 했을 겁니다. 
 - [youtubedl-android](https://github.com/yausername/youtubedl-android)
 - [youtube-dl](https://github.com/ytdl-org/youtube-dl)
 - [FFmpeg](https://github.com/FFmpeg/FFmpeg)
