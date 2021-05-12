@@ -49,7 +49,6 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends TabActivity {
     private TabHost host;
     private ListView library;
-    private ArrayAdapter<String> libraryAdapter;
     private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
     private TextView detail, downloadInfo;
     private EditText exploreInput;
@@ -204,58 +203,17 @@ public class MainActivity extends TabActivity {
             }
         });
 
-        visitDevSite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWeb("https://github.com/HyeongminKim/YoutubePlayer");
-            }
-        });
-        visitDevSite.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openWeb("https://github.com/HyeongminKim/YoutubePlayer/blob/master/LICENSE");
-                return false;
-            }
-        });
-        visitFFmpeg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWeb("https://github.com/FFmpeg/FFmpeg");
-            }
-        });
-        visitFFmpeg.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openWeb("https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md");
-                return false;
-            }
-        });
-        visitYoutubeDl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWeb("https://github.com/ytdl-org/youtube-dl");
-            }
-        });
-        visitYoutubeDl.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openWeb("https://github.com/ytdl-org/youtube-dl/blob/master/LICENSE");
-                return false;
-            }
-        });
-        visitDependence.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openWeb("https://github.com/yausername/youtubedl-android");
-            }
-        });
-        visitDependence.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                openWeb("https://github.com/yausername/youtubedl-android/blob/master/LICENSE");
-                return false;
-            }
-        });
+        addButtonEventListener(visitDevSite, "https://github.com/HyeongminKim/YoutubePlayer", false);
+        addButtonEventListener(visitDevSite, "https://github.com/HyeongminKim/YoutubePlayer/blob/master/LICENSE", true);
+
+        addButtonEventListener(visitFFmpeg, "https://github.com/FFmpeg/FFmpeg", false);
+        addButtonEventListener(visitFFmpeg, "https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md", true);
+
+        addButtonEventListener(visitYoutubeDl, "https://github.com/ytdl-org/youtube-dl", false);
+        addButtonEventListener(visitYoutubeDl, "https://github.com/ytdl-org/youtube-dl/blob/master/LICENSE", true);
+
+        addButtonEventListener(visitDependence, "https://github.com/yausername/youtubedl-android", false);
+        addButtonEventListener(visitDependence, "https://github.com/yausername/youtubedl-android/blob/master/LICENSE", true);
     }
 
     private void tabAdder(TabHost host, String tag, String indicator, int viewId) {
@@ -269,6 +227,26 @@ public class MainActivity extends TabActivity {
         startActivity(browserIntent);
     }
 
+    private void addButtonEventListener(Button target, String uri, boolean longClick) {
+        if(!longClick) {
+            target.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openWeb(uri);
+                }
+            });
+        } else {
+            target.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    openWeb(uri);
+                    return false;
+                }
+            });
+
+        }
+    }
+
     private void rowAdder() {
         File[] files = getMediaDownloadPath().listFiles();
         if(files == null) return;
@@ -277,7 +255,7 @@ public class MainActivity extends TabActivity {
             libraryItems.add(file.getName());
         }
 
-        libraryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, libraryItems);
+        ArrayAdapter<String> libraryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, libraryItems);
         library.setAdapter(libraryAdapter);
     }
 
