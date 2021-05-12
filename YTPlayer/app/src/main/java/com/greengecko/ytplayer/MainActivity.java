@@ -194,6 +194,7 @@ public class MainActivity extends TabActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(), "선택된 미디어를 제거할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                            rowAdder();
                         }
                     }
                 });
