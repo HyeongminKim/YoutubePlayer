@@ -1,10 +1,12 @@
 package com.greengecko.ytplayer;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -21,12 +23,18 @@ public class MediaPlayer extends AppCompatActivity {
     private SimpleExoPlayer player;
 
     private Uri videoSrc;
-    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar bar = getSupportActionBar();
+        View statusBar = getWindow().getDecorView();
+        if(bar != null && statusBar != null) {
+            statusBar.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+            bar.hide();
+        }
         setContentView(R.layout.activity_media_player);
+
         init();
         startService();
     }
@@ -56,7 +64,7 @@ public class MediaPlayer extends AppCompatActivity {
 
         playerView = findViewById(R.id.player);
 
-        intent = getIntent();
+        Intent intent = getIntent();
         videoSrc = Uri.parse(intent.getExtras().getString("src"));
     }
 
