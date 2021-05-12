@@ -312,8 +312,6 @@ public class MainActivity extends TabActivity {
         try {
             detail.setText(String.format("제목: %s\n업로더: %s", getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader()));
 
-            exploreInput.setFocusable(false);
-            exploreInput.setClickable(false);
             detail.setVisibility(View.VISIBLE);
             downloadInfo.setVisibility(View.VISIBLE);
             downloadProgress.setVisibility(View.VISIBLE);
@@ -322,8 +320,6 @@ public class MainActivity extends TabActivity {
             Toast.makeText(getApplicationContext(), "미디어 URL 입력", Toast.LENGTH_SHORT).show();
 
             exploreInput.setText(null);
-            exploreInput.setFocusable(true);
-            exploreInput.setClickable(true);
             detail.setVisibility(View.GONE);
             downloadInfo.setVisibility(View.GONE);
             downloadProgress.setVisibility(View.GONE);
@@ -333,8 +329,6 @@ public class MainActivity extends TabActivity {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "미디어 정보 사용 불가", Toast.LENGTH_SHORT).show();
 
-            exploreInput.setFocusable(true);
-            exploreInput.setClickable(true);
             detail.setVisibility(View.GONE);
             downloadInfo.setVisibility(View.GONE);
             downloadProgress.setVisibility(View.GONE);
@@ -350,15 +344,11 @@ public class MainActivity extends TabActivity {
                 downloadInfo.setVisibility(View.GONE);
                 downloadProgress.setVisibility(View.GONE);
                 exploreInput.setText(null);
-                exploreInput.setFocusable(true);
-                exploreInput.setClickable(true);
             }, e -> {
                 e.printStackTrace();
                 Toast.makeText(getApplicationContext(), "다운로드 실패", Toast.LENGTH_SHORT).show();
                 downloadInfo.setVisibility(View.GONE);
                 downloadProgress.setVisibility(View.GONE);
-                exploreInput.setFocusable(true);
-                exploreInput.setClickable(true);
         });
         compositeDisposable.add(disposable);
     }
