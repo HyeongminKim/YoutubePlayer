@@ -27,6 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
 import com.yausername.ffmpeg.FFmpeg;
@@ -217,7 +219,7 @@ public class MainActivity extends TabActivity {
         addButtonEventListener(visitDependence, "https://github.com/yausername/youtubedl-android/blob/master/LICENSE", true);
     }
 
-    private void tabAdder(TabHost host, String tag, String indicator, int viewId) {
+    private void tabAdder(@NonNull TabHost host, String tag, String indicator, int viewId) {
         TabHost.TabSpec tab = host.newTabSpec(tag).setIndicator(indicator);
         tab.setContent(viewId);
         host.addTab(tab);
@@ -292,6 +294,7 @@ public class MainActivity extends TabActivity {
         }
     }
 
+    @Nullable
     private VideoInfo getMediaInfo(String url) {
         try {
             return YoutubeDL.getInstance().getInfo(url);
@@ -305,7 +308,7 @@ public class MainActivity extends TabActivity {
         return new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "YT Player");
     }
 
-    private void mediaDownloader(String url) {
+    private void mediaDownloader(@NonNull String url) {
         File path = getMediaDownloadPath();
         YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
         request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
