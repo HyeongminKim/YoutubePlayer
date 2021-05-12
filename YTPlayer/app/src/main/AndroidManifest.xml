@@ -12,12 +12,15 @@
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:installLocation="preferExternal"
+        android:usesCleartextTraffic="true"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.YTPlayer">
-        <activity android:name=".MediaPlayer"></activity>
+        <activity
+            android:name=".MediaPlayer"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
