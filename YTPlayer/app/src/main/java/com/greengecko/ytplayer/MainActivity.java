@@ -135,11 +135,7 @@ public class MainActivity extends TabActivity {
             fatalError.show();
         }
 
-        new Thread() {
-            public void run() {
-                dependenceUpdate(getApplicationContext());
-            }
-        }.start();
+        dependenceUpdate();
     }
 
     private void setAction() {
@@ -191,6 +187,7 @@ public class MainActivity extends TabActivity {
             public void onClick(View view) {
                 mediaConvertExtension.setVisibility(((CheckBox) view).isChecked() ? View.VISIBLE : View.GONE);
                 mediaConvertGuide.setVisibility(((CheckBox) view).isChecked() ? View.VISIBLE : View.GONE);
+                mediaConvertEnable.setText(((CheckBox) view).isChecked() ? "다음으로 변환" : "미디어 변환하기");
             }
         });
 
@@ -325,12 +322,28 @@ public class MainActivity extends TabActivity {
         }
     }
 
-    private void dependenceUpdate(Context context) {
-        try {
-            YoutubeDL.getInstance().updateYoutubeDL(context);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void dependenceUpdate() {
+        Toast.makeText(getApplicationContext(), "라이브러리 업데이트 중", Toast.LENGTH_SHORT).show();
+        Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().updateYoutubeDL(getApplication()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(status -> {
+                    switch (status) {
+                        case DONE:
+                            Toast.makeText(getApplicationContext(), "라이브러리 업데이트 성공", Toast.LENGTH_SHORT).show();
+                            break;
+                        case ALREADY_UP_TO_DATE:
+                            Toast.makeText(getApplicationContext(), "이미 최신 라이브러리", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(getApplicationContext(), status.toString(), Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                }, e -> {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "라이브러리 업데이트 실패", Toast.LENGTH_SHORT).show();
+                });
+        compositeDisposable.add(disposable);
     }
 
     @Nullable
