@@ -19,9 +19,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,13 +54,17 @@ public class MainActivity extends TabActivity {
     private TabHost host;
     private ListView library;
     private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
-    private TextView detail, downloadInfo;
+    private TextView detail, downloadInfo, mediaConvertGuide;
     private EditText exploreInput;
     private ProgressBar downloadProgress;
+    private CheckBox mediaConvertEnable;
+    private Spinner mediaConvertExtension;
+    private String mediaConvert;
     private CompositeDisposable compositeDisposable;
     private InputMethodManager inputMethod;
 
     private ArrayList<String> libraryItems;
+    private final String[] convertibleItems = {"선택", "mp4", "m4a", "3gp", "flac", "mp3", "mkv", "wav", "ogg", "webm", "gif"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +88,9 @@ public class MainActivity extends TabActivity {
         detail = findViewById(R.id.detail);
         downloadInfo = findViewById(R.id.downloadInfo);
         downloadProgress = findViewById(R.id.downloadProgress);
+        mediaConvertEnable = findViewById(R.id.convertEnable);
+        mediaConvertExtension = findViewById(R.id.convertExtension);
+        mediaConvertGuide = findViewById(R.id.convertToText);
         library = findViewById(R.id.library);
         visitDevSite = findViewById(R.id.visitDevSite);
         visitFFmpeg = findViewById(R.id.visitFFmpeg);
@@ -91,9 +100,18 @@ public class MainActivity extends TabActivity {
         libraryItems = new ArrayList<>();
         compositeDisposable = new CompositeDisposable();
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                getApplicationContext(), android.R.layout.simple_spinner_item, convertibleItems
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        mediaConvertExtension.setAdapter(adapter);
+
         tabAdder(host, "HOME", "홈", R.id.tabHome);
         tabAdder(host, "EXPLORE", "탐색", R.id.tabExplore);
         tabAdder(host, "LIBRARY", "라이브러리", R.id.tabLibrary);
+
+        mediaConvertExtension.setSelection(0);
+        mediaConvert = convertibleItems[0];
 
         if(dependenceInitialize(getApplicationContext())) {
             Toast.makeText(this, "라이브러리 초기화 성공", Toast.LENGTH_SHORT).show();
@@ -165,6 +183,27 @@ public class MainActivity extends TabActivity {
                 }
 
                 return true;
+            }
+        });
+
+        mediaConvertEnable.setOnClickListener(new CheckBox.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaConvertExtension.setVisibility(((CheckBox) view).isChecked() ? View.VISIBLE : View.GONE);
+                mediaConvertGuide.setVisibility(((CheckBox) view).isChecked() ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        mediaConvertExtension.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mediaConvert = convertibleItems[i];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                mediaConvertExtension.setSelection(0);
+                mediaConvert = convertibleItems[0];
             }
         });
 
@@ -312,6 +351,16 @@ public class MainActivity extends TabActivity {
         File path = getMediaDownloadPath();
         YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
         request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
+        if(mediaConvertEnable.isChecked() && !mediaConvert.equals(convertibleItems[0])) {
+            if(mediaConvert.equals("mp3") || mediaConvert.equals("flac") || mediaConvert.equals("m4a") ||
+                    mediaConvert.equals("wav") || mediaConvert.equals("ogg")) {
+                request.addOption("--extract-audio");
+                request.addOption("--audio-format", mediaConvert);
+                request.addOption("--audio-quality", "0");
+            } else {
+                request.addOption("-f", mediaConvert);
+            }
+        }
 
         try {
             detail.setText(String.format("제목: %s\n업로더: %s", getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader()));
