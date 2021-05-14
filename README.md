@@ -1,5 +1,5 @@
 # YT Player
-안드로이드를 위한 오프라인 또는 스트리밍 지원 유튜브 플레이어
+안드로이드를 위한 유튜브 플레이어 (다운로드 가능)
 
 ### 사용법
 - 사용법은 [위키](https://github.com/HyeongminKim/YoutubePlayer/wiki/사용법)를 참조하시기 바랍니다. 
