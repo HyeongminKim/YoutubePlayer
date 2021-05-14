@@ -366,7 +366,7 @@ public class MainActivity extends TabActivity {
         request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
         if(mediaConvertEnable.isChecked() && !mediaConvert.equals(convertibleItems[0])) {
             if(mediaConvert.equals("mp3") || mediaConvert.equals("flac") || mediaConvert.equals("m4a") ||
-                    mediaConvert.equals("wav") || mediaConvert.equals("ogg")) {
+                    mediaConvert.equals("wav")) {
                 request.addOption("--extract-audio");
                 request.addOption("--audio-format", mediaConvert);
                 request.addOption("--audio-quality", "0");
