@@ -367,6 +367,7 @@ public class MainActivity extends TabActivity {
         if(mediaConvertEnable.isChecked() && !mediaConvert.equals(convertibleItems[0])) {
             if(mediaConvert.equals("mp3") || mediaConvert.equals("flac") || mediaConvert.equals("m4a") ||
                     mediaConvert.equals("wav")) {
+                request.addOption("--embed-thumbnail");
                 request.addOption("--extract-audio");
                 request.addOption("--audio-format", mediaConvert);
                 request.addOption("--audio-quality", "0");
