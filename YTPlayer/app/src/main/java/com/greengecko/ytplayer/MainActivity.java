@@ -51,20 +51,20 @@ import io.reactivex.schedulers.Schedulers;
 
 
 public class MainActivity extends TabActivity {
-    private TabHost host;
-    private ListView library;
-    private Button visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
-    private TextView detail, downloadInfo, mediaConvertGuide;
-    private EditText exploreInput;
-    private ProgressBar downloadProgress;
-    private CheckBox mediaConvertEnable;
-    private Spinner mediaConvertExtension;
-    private String mediaConvert;
-    private CompositeDisposable compositeDisposable;
-    private InputMethodManager inputMethod;
+    private TabHost               host;
+    private ListView              library;
+    private Button                visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
+    private TextView              detail, downloadInfo, mediaConvertGuide;
+    private EditText              exploreInput;
+    private ProgressBar           downloadProgress;
+    private CheckBox              mediaConvertEnable;
+    private Spinner               mediaConvertExtension;
+    private String                mediaConvert;
+    private CompositeDisposable   compositeDisposable;
+    private InputMethodManager    inputMethod;
 
-    private ArrayList<String> libraryItems;
-    private String[] convertibleItems;
+    private ArrayList<String>     libraryItems;
+    private String[]              convertibleItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -20,10 +20,10 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 
 
 public class MediaPlayer extends AppCompatActivity {
-    private PlayerView playerView;
-    private SimpleExoPlayer player;
+    private PlayerView        playerView;
+    private SimpleExoPlayer   player;
 
-    private Uri videoSrc;
+    private Uri               videoSrc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +64,10 @@ public class MediaPlayer extends AppCompatActivity {
     private void init() {
         setContentView(R.layout.activity_media_player);
 
-        playerView = findViewById(R.id.player);
+        playerView =    findViewById(R.id.player);
 
         Intent intent = getIntent();
-        videoSrc = Uri.parse(intent.getExtras().getString("src"));
+        videoSrc =      Uri.parse(intent.getExtras().getString("src"));
     }
 
     private void startService() {
