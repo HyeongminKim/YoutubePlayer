@@ -114,10 +114,10 @@ public class MainActivity extends TabActivity {
         mediaConvert = convertibleItems[0];
 
         if(dependenceInitialize(getApplicationContext())) {
-            Toast.makeText(this, "라이브러리 초기화 성공", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "패키지 초기화 성공", Toast.LENGTH_SHORT).show();
         } else {
             AlertDialog.Builder fatalError = new AlertDialog.Builder(MainActivity.this);
-            fatalError.setTitle("라이브러리를 초기화 예외");
+            fatalError.setTitle("패키지 초기화 예외");
             fatalError.setMessage("의존성 패키지를 초기화할 수 없어 앱을 종료합니다. ");
             fatalError.setNeutralButton("이슈 제보", new DialogInterface.OnClickListener() {
                 @Override
@@ -323,17 +323,17 @@ public class MainActivity extends TabActivity {
     }
 
     private void dependenceUpdate() {
-        Toast.makeText(getApplicationContext(), "라이브러리 업데이트 중", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "패키지 업데이트 중", Toast.LENGTH_SHORT).show();
         Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().updateYoutubeDL(getApplication()))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(status -> {
                     switch (status) {
                         case DONE:
-                            Toast.makeText(getApplicationContext(), "라이브러리 업데이트 성공", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "패키지 업데이트 성공", Toast.LENGTH_SHORT).show();
                             break;
                         case ALREADY_UP_TO_DATE:
-                            Toast.makeText(getApplicationContext(), "이미 최신 라이브러리", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "이미 최신 패키지", Toast.LENGTH_SHORT).show();
                             break;
                         default:
                             Toast.makeText(getApplicationContext(), status.toString(), Toast.LENGTH_LONG).show();
@@ -341,7 +341,7 @@ public class MainActivity extends TabActivity {
                     }
                 }, e -> {
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "라이브러리 업데이트 실패", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "패키지 업데이트 실패", Toast.LENGTH_SHORT).show();
                 });
         compositeDisposable.add(disposable);
     }
