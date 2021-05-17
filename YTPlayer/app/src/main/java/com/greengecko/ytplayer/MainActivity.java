@@ -64,7 +64,7 @@ public class MainActivity extends TabActivity {
     private InputMethodManager inputMethod;
 
     private ArrayList<String> libraryItems;
-    private final String[] convertibleItems = {"선택", "mp4", "m4a", "3gp", "flac", "mp3", "mkv", "wav", "ogg", "webm", "gif"};
+    private String[] convertibleItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +98,7 @@ public class MainActivity extends TabActivity {
         visitDependence = findViewById(R.id.visitDependence);
 
         libraryItems = new ArrayList<>();
+        convertibleItems = new String[] {getString(R.string.choose), "mp4", "m4a", "3gp", "flac", "mp3", "mkv", "wav", "ogg", "webm", "gif"};
         compositeDisposable = new CompositeDisposable();
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -106,27 +107,27 @@ public class MainActivity extends TabActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         mediaConvertExtension.setAdapter(adapter);
 
-        tabAdder(host, "HOME", "홈", R.id.tabHome);
-        tabAdder(host, "EXPLORE", "탐색", R.id.tabExplore);
-        tabAdder(host, "LIBRARY", "라이브러리", R.id.tabLibrary);
+        tabAdder(host, "HOME", getString(R.string.home), R.id.tabHome);
+        tabAdder(host, "EXPLORE", getString(R.string.explore), R.id.tabExplore);
+        tabAdder(host, "LIBRARY", getString(R.string.library), R.id.tabLibrary);
 
         mediaConvertExtension.setSelection(0);
         mediaConvert = convertibleItems[0];
 
         if(dependenceInitialize(getApplicationContext())) {
-            Toast.makeText(this, "패키지 초기화 성공", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getText(R.string.packageInitSuccess), Toast.LENGTH_SHORT).show();
         } else {
             AlertDialog.Builder fatalError = new AlertDialog.Builder(MainActivity.this);
-            fatalError.setTitle("패키지 초기화 예외");
-            fatalError.setMessage("의존성 패키지를 초기화할 수 없어 앱을 종료합니다. ");
-            fatalError.setNeutralButton("이슈 제보", new DialogInterface.OnClickListener() {
+            fatalError.setTitle(getText(R.string.packageInitFail));
+            fatalError.setMessage(getText(R.string.packageInitFailMsg));
+            fatalError.setNeutralButton(getText(R.string.packageInitFailReport), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     openWeb("https://github.com/HyeongminKim/YoutubePlayer/issues");
                     finish();
                 }
             });
-            fatalError.setPositiveButton("승인", new DialogInterface.OnClickListener() {
+            fatalError.setPositiveButton(getText(R.string.dialogOK), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     finish();
@@ -175,7 +176,7 @@ public class MainActivity extends TabActivity {
                 if(isStoragePermissionGranted()) {
                     mediaDownloader(exploreInput.getText().toString());
                 } else {
-                    Toast.makeText(getApplicationContext(), "다운로드 경로에 접근 권한이 없습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getText(R.string.accessFailDownloads), Toast.LENGTH_SHORT).show();
                 }
 
                 return true;
@@ -187,7 +188,7 @@ public class MainActivity extends TabActivity {
             public void onClick(View view) {
                 mediaConvertExtension.setVisibility(((CheckBox) view).isChecked() ? View.VISIBLE : View.GONE);
                 mediaConvertGuide.setVisibility(((CheckBox) view).isChecked() ? View.VISIBLE : View.GONE);
-                mediaConvertEnable.setText(((CheckBox) view).isChecked() ? "다음으로 변환" : "미디어 변환하기");
+                mediaConvertEnable.setText(((CheckBox) view).isChecked() ? getText(R.string.convertTo) : getText(R.string.convertMedia));
 
                 mediaConvertExtension.setSelection(0);
                 mediaConvert = convertibleItems[0];
@@ -219,10 +220,10 @@ public class MainActivity extends TabActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
                 AlertDialog.Builder deleteMedia = new AlertDialog.Builder(MainActivity.this);
-                deleteMedia.setTitle("선택된 미디어를 삭제하시겠습니까?");
-                deleteMedia.setMessage("이 동작은 되돌릴 수 없습니다. ");
-                deleteMedia.setNegativeButton("취소", null);
-                deleteMedia.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                deleteMedia.setTitle(getText(R.string.removeMedia));
+                deleteMedia.setMessage(getText(R.string.removeMediaMsg));
+                deleteMedia.setNegativeButton(getText(R.string.dialogCancel), null);
+                deleteMedia.setPositiveButton(getText(R.string.removeAction), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String deleteLocation = getMediaDownloadPath().getPath() + "/" + libraryItems.get(position);
@@ -234,7 +235,7 @@ public class MainActivity extends TabActivity {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "선택된 미디어를 제거할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getText(R.string.removeActionFail), Toast.LENGTH_SHORT).show();
                             rowAdder();
                         }
                     }
@@ -326,17 +327,17 @@ public class MainActivity extends TabActivity {
     }
 
     private void dependenceUpdate() {
-        Toast.makeText(getApplicationContext(), "패키지 업데이트 중", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getText(R.string.packageUpdating), Toast.LENGTH_SHORT).show();
         Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().updateYoutubeDL(getApplication()))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(status -> {
                     switch (status) {
                         case DONE:
-                            Toast.makeText(getApplicationContext(), "패키지 업데이트 성공", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getText(R.string.packageUpdateSuccess), Toast.LENGTH_SHORT).show();
                             break;
                         case ALREADY_UP_TO_DATE:
-                            Toast.makeText(getApplicationContext(), "이미 최신 패키지", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getText(R.string.packageUpToDate), Toast.LENGTH_SHORT).show();
                             break;
                         default:
                             Toast.makeText(getApplicationContext(), status.toString(), Toast.LENGTH_LONG).show();
@@ -344,7 +345,7 @@ public class MainActivity extends TabActivity {
                     }
                 }, e -> {
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "패키지 업데이트 실패", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getText(R.string.packageUpdateFail), Toast.LENGTH_SHORT).show();
                 });
         compositeDisposable.add(disposable);
     }
@@ -380,14 +381,14 @@ public class MainActivity extends TabActivity {
         }
 
         try {
-            detail.setText(String.format("제목: %s\n업로더: %s", getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader()));
+            detail.setText(String.format(getText(R.string.title) + ": %s\n" + getText(R.string.author) + ": %s", getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader()));
 
             detail.setVisibility(View.VISIBLE);
             downloadInfo.setVisibility(View.VISIBLE);
             downloadProgress.setVisibility(View.VISIBLE);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "미디어 URL 입력", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getText(R.string.mediaURL), Toast.LENGTH_SHORT).show();
 
             exploreInput.setText(null);
             detail.setVisibility(View.GONE);
@@ -397,7 +398,7 @@ public class MainActivity extends TabActivity {
             return;
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "미디어 정보 사용 불가", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getText(R.string.failToParseMediaInfo), Toast.LENGTH_SHORT).show();
 
             detail.setVisibility(View.GONE);
             downloadInfo.setVisibility(View.GONE);
@@ -410,13 +411,13 @@ public class MainActivity extends TabActivity {
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(youtubeDLResponse -> {
-                Toast.makeText(getApplicationContext(), "다운로드 성공", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getText(R.string.downloadSuccess), Toast.LENGTH_SHORT).show();
                 downloadInfo.setVisibility(View.GONE);
                 downloadProgress.setVisibility(View.GONE);
                 exploreInput.setText(null);
             }, e -> {
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "다운로드 실패", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();
                 downloadInfo.setVisibility(View.GONE);
                 downloadProgress.setVisibility(View.GONE);
         });
@@ -434,11 +435,11 @@ public class MainActivity extends TabActivity {
             runOnUiThread(() -> {
                 downloadProgress.setProgress((int) progress);
                 if(hour == 0 && finalMin == 0) {
-                    downloadInfo.setText(String.format("%d초 남음", second));
+                    downloadInfo.setText(String.format(getString(R.string.remainSec), second));
                 } else if(hour == 0) {
-                    downloadInfo.setText(String.format("%d분 %d초 남음", finalMin, second));
+                    downloadInfo.setText(String.format(getString(R.string.remainMin), finalMin, second));
                 } else {
-                    downloadInfo.setText(String.format("%d시간 %d분 %d초 남음", hour, finalMin, second));
+                    downloadInfo.setText(String.format(getString(R.string.remainHour), hour, finalMin, second));
                 }
             });
         }

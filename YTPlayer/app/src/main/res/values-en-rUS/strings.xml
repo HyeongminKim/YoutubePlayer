@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YT Player</string>
+    <string name="info">Now you can watch Youtube without worrying about charges.</string>
+    <string name="visitDevSite">Visit GitHub for this app</string>
+    <string name="usedThirdParty">Third Party Package License</string>
+    <string name="visitDependence">Visit Dependency Package GitHub</string>
+    <string name="visitGuide">Short tap\nvisit repository\n\nLong tap\ncheck repository license</string>
+    <string name="exploreHint">Enter your media URL here</string>
+    <string name="mediaConvert">Converting Media</string>
+    <string name="copyright">Some functions of the device have been restricted within the app for copyright protection</string>
+    <string name="convertMedia">Converting Media</string>
+    <string name="copyLimited">Limited functionality: screen capture, screen recording</string>
+    <string name="choose">Choose</string>
+    <string name="home">Home</string>
+    <string name="explore">Explore</string>
+    <string name="library">Library</string>
+    <string name="dialogOK">OK</string>
+    <string name="dialogCancel">Cancel</string>
+    <string name="packageInitSuccess">Package initialization successful</string>
+    <string name="packageInitFail">Package initialization failed</string>
+    <string name="packageInitFailMsg">The dependency package could not be initialized and the app terminated.</string>
+    <string name="packageInitFailReport">Reporting issues</string>
+    <string name="packageUpdating">Updating package</string>
+    <string name="packageUpdateSuccess">Package update successful</string>
+    <string name="packageUpToDate">Already the latest package</string>
+    <string name="packageUpdateFail">Package update failed</string>
+    <string name="accessFailDownloads">You do not have access to the download path.</string>
+    <string name="convertTo">Convert to</string>
+    <string name="removeMedia">Are you sure you want to delete the selected media?</string>
+    <string name="removeMediaMsg">This action cannot be rolled back.</string>
+    <string name="removeAction">Delete</string>
+    <string name="removeActionFail">The selected media cannot be deleted.</string>
+    <string name="title">Title</string>
+    <string name="author">Uploader</string>
+    <string name="mediaURL">Enter the media URL</string>
+    <string name="failToParseMediaInfo">Media information unavailable</string>
+    <string name="downloadSuccess">Download success</string>
+    <string name="downloadFail">Download failed</string>
+    <string name="remainSec">%d seconds remaining</string>
+    <string name="remainMin">%d minutes %d seconds remaining</string>
+    <string name="remainHour">%d hours %d minutes %d seconds remaining</string>
+</resources>

@@ -2,19 +2,61 @@
     <string name="app_name">YT Player</string>
     <string name="info">이제 요금 걱정 없이 Youtube를 감상할 수 있습니다</string>
     <string name="visitDevSite">이 앱의 GitHub 방문</string>
-    <string name="appCopyright">GPL version 3.0</string>
+    <string name="appCopyright" translatable="false">GPL version 3.0</string>
 
     <string name="usedThirdParty">제 3자 패키지 라이선스</string>
-    <string name="ffmpeg">FFmpeg</string>
-    <string name="ffmpegCopyright">LGPL version 2.1 or later</string>
-    <string name="YTdl">youtube-dl</string>
+    <string name="ffmpeg" translatable="false">FFmpeg</string>
+    <string name="ffmpegCopyright" translatable="false">LGPL version 2.1 or later</string>
+    <string name="YTdl" translatable="false">youtube-dl</string>
     <string name="visitDependence">의존성 패키지 GitHub 방문</string>
-    <string name="dependenceCopyright">GPL version 3.0</string>
+    <string name="dependenceCopyright" translatable="false">GPL version 3.0</string>
     <string name="visitGuide">"짧게 탭\n레파지토리 방문\n\n길게 탭\n레파지토리 라이선스를 확인"</string>
 
     <string name="exploreHint">여기에 미디어 URL 입력</string>
     <string name="mediaConvert">미디어 변환하기</string>
-    <string name="mediaConvertGuide"> → </string>
+    <string name="mediaConvertGuide" translatable="false"> → </string>
     <string name="copyright">저작권 보호를 위해 기기의 일부 기능이 앱 내에서 제한되었음</string>
     <string name="copyLimited">제한된 기능: 화면 캡쳐, 화면 기록</string>
+
+    <string name="choose">선택</string>
+
+    <string name="home">홈</string>
+    <string name="explore">탐색</string>
+    <string name="library">라이브러리</string>
+
+    <string name="dialogOK">승인</string>
+    <string name="dialogCancel">취소</string>
+
+    <string name="packageInitSuccess">패키지 초기화 성공</string>
+    <string name="packageInitFail">패키지 초기화 실패</string>
+    <string name="packageInitFailMsg">의존성 패키지를 초기화할 수 없어 앱을 종료합니다.</string>
+    <string name="packageInitFailReport">이슈 제보</string>
+
+    <string name="packageUpdating">패키지 업데이트 중</string>
+    <string name="packageUpdateSuccess">패키지 업데이트 성공</string>
+    <string name="packageUpToDate">이미 최신 패키지</string>
+    <string name="packageUpdateFail">패키지 업데이트 실패</string>
+
+    <string name="accessFailDownloads">다운로드 경로에 접근 권한이 없습니다.</string>
+
+    <string name="convertMedia">미디어 변환하기</string>
+    <string name="convertTo">다음으로 변환</string>
+
+    <string name="removeMedia">선택된 미디어를 삭제하시겠습니까?</string>
+    <string name="removeMediaMsg">이 동작은 되돌릴 수 없습니다.</string>
+    <string name="removeAction">삭제</string>
+    <string name="removeActionFail">선택된 미디어를 제거할 수 없습니다.</string>
+
+    <string name="title">제목</string>
+    <string name="author">업로더</string>
+
+    <string name="mediaURL">미디어 URL 입력</string>
+    <string name="failToParseMediaInfo">미디어 정보 사용 불가</string>
+
+    <string name="downloadSuccess">다운로드 성공</string>
+    <string name="downloadFail">다운로드 실패</string>
+
+    <string name="remainSec">%d초 남음</string>
+    <string name="remainMin">%d분 %d초 남음</string>
+    <string name="remainHour">%d시간 %d분 %d초 남음</string>
 </resources>
