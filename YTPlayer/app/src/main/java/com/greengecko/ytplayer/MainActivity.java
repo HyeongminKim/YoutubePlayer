@@ -188,6 +188,9 @@ public class MainActivity extends TabActivity {
                 mediaConvertExtension.setVisibility(((CheckBox) view).isChecked() ? View.VISIBLE : View.GONE);
                 mediaConvertGuide.setVisibility(((CheckBox) view).isChecked() ? View.VISIBLE : View.GONE);
                 mediaConvertEnable.setText(((CheckBox) view).isChecked() ? "다음으로 변환" : "미디어 변환하기");
+
+                mediaConvertExtension.setSelection(0);
+                mediaConvert = convertibleItems[0];
             }
         });
 
