@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '31.0.0 rc3'
+    buildToolsVersion '31.0.0 rc4'
 
     defaultConfig {
         applicationId "com.greengecko.ytplayer"
@@ -54,9 +54,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.github.yausername.youtubedl-android:library:0.12.4'
     implementation 'com.github.yausername.youtubedl-android:ffmpeg:0.12.4'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'com.trello.rxlifecycle2:rxlifecycle-android:2.1.0'
-    implementation 'org.jetbrains:annotations:15.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-android:2.2.2'
+    implementation 'org.jetbrains:annotations:20.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
