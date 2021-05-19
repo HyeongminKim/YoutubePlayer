@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">YT Player</string>
-    <string name="info">Now you can watch Youtube without worrying about charges.</string>
+    <string name="detail">Now you can watch Youtube without worrying about charges.</string>
     <string name="visitDevSite">Visit GitHub for this app</string>
     <string name="usedThirdParty">Third Party Package License</string>
     <string name="visitDependence">Visit Dependency Package GitHub</string>
@@ -12,7 +12,7 @@
     <string name="convertMedia">Converting Media</string>
     <string name="copyLimited">Limited functionality: screen capture, screen recording</string>
     <string name="choose">Choose</string>
-    <string name="home">Home</string>
+    <string name="info">Info</string>
     <string name="explore">Explore</string>
     <string name="library">Library</string>
     <string name="dialogOK">OK</string>

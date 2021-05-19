@@ -19,9 +19,9 @@
             android:id="@android:id/tabcontent"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <include layout="@layout/activity_home"/>
-            <include layout="@layout/activity_explore"/>
             <include layout="@layout/activity_library"/>
+            <include layout="@layout/activity_explore"/>
+            <include layout="@layout/activity_info"/>
         </FrameLayout>
     </LinearLayout>
 </TabHost>

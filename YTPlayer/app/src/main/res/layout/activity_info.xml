@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tabHome"
+    android:id="@+id/tabInfo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="30dp"
@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="25dp"
-        android:text="@string/info" />
+        android:text="@string/detail" />
 
     <Button
         android:id="@+id/visitDevSite"

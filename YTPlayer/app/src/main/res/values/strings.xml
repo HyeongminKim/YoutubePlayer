@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">YT Player</string>
-    <string name="info">이제 요금 걱정 없이 Youtube를 감상할 수 있습니다</string>
+    <string name="detail">이제 요금 걱정 없이 Youtube를 감상할 수 있습니다</string>
     <string name="visitDevSite">이 앱의 GitHub 방문</string>
     <string name="appCopyright" translatable="false">GPL version 3.0</string>
 
@@ -20,7 +20,7 @@
 
     <string name="choose">선택</string>
 
-    <string name="home">홈</string>
+    <string name="info">정보</string>
     <string name="explore">탐색</string>
     <string name="library">라이브러리</string>
 

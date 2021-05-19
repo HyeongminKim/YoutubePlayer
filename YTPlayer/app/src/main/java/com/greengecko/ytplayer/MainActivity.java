@@ -107,9 +107,9 @@ public class MainActivity extends TabActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         mediaConvertExtension.setAdapter(adapter);
 
-        tabAdder(host, "HOME", getString(R.string.home), R.id.tabHome);
-        tabAdder(host, "EXPLORE", getString(R.string.explore), R.id.tabExplore);
         tabAdder(host, "LIBRARY", getString(R.string.library), R.id.tabLibrary);
+        tabAdder(host, "EXPLORE", getString(R.string.explore), R.id.tabExplore);
+        tabAdder(host, "INFO", getString(R.string.info), R.id.tabInfo);
 
         mediaConvertExtension.setSelection(0);
         mediaConvert = convertibleItems[0];
@@ -141,6 +141,7 @@ public class MainActivity extends TabActivity {
 
     private void setAction() {
         host.setCurrentTab(0);
+        rowAdder();
 
         host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
