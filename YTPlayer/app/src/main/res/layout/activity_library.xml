@@ -3,10 +3,23 @@
     android:id="@+id/tabLibrary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical" >
     <ListView
         android:id="@+id/library"
         android:numColumns="3"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/emptyLibrary"
+        android:text="@string/empty"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/goExplore"
+        android:text="@string/goExplore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

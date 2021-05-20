@@ -53,8 +53,8 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends TabActivity {
     private TabHost               host;
     private ListView              library;
-    private Button                visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence;
-    private TextView              detail, downloadInfo, mediaConvertGuide;
+    private Button                visitDevSite, visitFFmpeg, visitYoutubeDl, visitDependence, goExplore;
+    private TextView              detail, downloadInfo, mediaConvertGuide, emptyLibrary;
     private EditText              exploreInput;
     private ProgressBar           downloadProgress;
     private CheckBox              mediaConvertEnable;
@@ -92,6 +92,8 @@ public class MainActivity extends TabActivity {
         mediaConvertExtension = findViewById(R.id.convertExtension);
         mediaConvertGuide = findViewById(R.id.convertToText);
         library = findViewById(R.id.library);
+        emptyLibrary = findViewById(R.id.emptyLibrary);
+        goExplore = findViewById(R.id.goExplore);
         visitDevSite = findViewById(R.id.visitDevSite);
         visitFFmpeg = findViewById(R.id.visitFFmpeg);
         visitYoutubeDl = findViewById(R.id.visitYTdl);
@@ -157,6 +159,13 @@ public class MainActivity extends TabActivity {
                 if(tabTag.equals("LIBRARY")) {
                     rowAdder();
                 }
+            }
+        });
+
+        goExplore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                host.setCurrentTab(1);
             }
         });
 
@@ -293,7 +302,17 @@ public class MainActivity extends TabActivity {
 
     private void rowAdder() {
         File[] files = getMediaDownloadPath().listFiles();
-        if(files == null) return;
+        if(files == null || files.length == 0) {
+            library.setVisibility(View.GONE);
+            emptyLibrary.setVisibility(View.VISIBLE);
+            goExplore.setVisibility(View.VISIBLE);
+            return;
+        } else {
+            library.setVisibility(View.VISIBLE);
+            emptyLibrary.setVisibility(View.GONE);
+            goExplore.setVisibility(View.GONE);
+        }
+
         libraryItems.clear();
         for (File file : files) {
             libraryItems.add(file.getName());

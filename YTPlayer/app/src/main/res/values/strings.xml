@@ -23,6 +23,8 @@
     <string name="info">정보</string>
     <string name="explore">탐색</string>
     <string name="library">라이브러리</string>
+    <string name="empty">표시할 미디어가 없습니다.\n탐색 탭에서 새로운 미디어를 추가해 보세요.</string>
+    <string name="goExplore">지금 탐색하러 가기</string>
 
     <string name="dialogOK">승인</string>
     <string name="dialogCancel">취소</string>

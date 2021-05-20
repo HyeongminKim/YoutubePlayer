@@ -15,6 +15,8 @@
     <string name="info">Info</string>
     <string name="explore">Explore</string>
     <string name="library">Library</string>
+    <string name="empty">There is no media to display.\nTry adding new media from the Explore tab.</string>
+    <string name="goExplore">Go Explore Now</string>
     <string name="dialogOK">OK</string>
     <string name="dialogCancel">Cancel</string>
     <string name="packageInitSuccess">Package initialization successful</string>
