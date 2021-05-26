@@ -1,11 +1,11 @@
 package com.greengecko.ytplayer;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -29,16 +29,19 @@ public class MediaPlayer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        ActionBar bar = getSupportActionBar();
-        View statusBar = getWindow().getDecorView();
-        if(bar != null && statusBar != null) {
-            statusBar.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-            bar.hide();
-        }
         setContentView(R.layout.activity_media_player);
 
         init();
+        setAction();
         startService();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus) {
+            hideSystemUI();
+        }
     }
 
     @Override
@@ -70,6 +73,23 @@ public class MediaPlayer extends AppCompatActivity {
         videoSrc = Uri.parse(intent.getExtras().getString("src"));
     }
 
+    private void setAction() {
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int i) {
+                if((i & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
+                    Handler mHandler = new Handler();
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideSystemUI();
+                        }
+                    }, 10000);
+                }
+            }
+        });
+    }
+
     private void startService() {
         player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
         playerView.setPlayer(player);
@@ -79,5 +99,17 @@ public class MediaPlayer extends AppCompatActivity {
         player.prepare(source);
 
         player.setPlayWhenReady(true);
+    }
+
+    private void hideSystemUI() {
+        View view = getWindow().getDecorView();
+        view.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE |
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+        );
     }
 }
