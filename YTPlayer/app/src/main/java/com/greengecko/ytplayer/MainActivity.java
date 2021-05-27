@@ -41,6 +41,7 @@ import com.yausername.youtubedl_android.YoutubeDLRequest;
 import com.yausername.youtubedl_android.mapper.VideoInfo;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import io.reactivex.Observable;
@@ -236,12 +237,20 @@ public class MainActivity extends TabActivity {
                 deleteMedia.setPositiveButton(getText(R.string.removeAction), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String deleteLocation = getMediaDownloadPath().getPath() + "/" + libraryItems.get(position);
+                        String mediaLocation = getMediaDownloadPath().getPath() + "/" + libraryItems.get(position);
+                        String metaDataDescription = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".description";
+                        String metaDataInfo = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json";
                         try {
-                            File path = new File(deleteLocation);
-                            if (path.exists()) {
-                                path.delete();
+                            File mediaPath = new File(mediaLocation);
+                            File descriptionPath = new File(metaDataDescription);
+                            File infoPath = new File(metaDataInfo);
+                            if (mediaPath.exists() && descriptionPath.exists() && infoPath.exists()) {
+                                mediaPath.delete();
+                                descriptionPath.delete();
+                                infoPath.delete();
                                 rowAdder();
+                            } else {
+                                throw new FileNotFoundException();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -388,6 +397,32 @@ public class MainActivity extends TabActivity {
         return new File(getApplicationContext().getDataDir(), "YT Player");
     }
 
+    private void getMediaMetadata(@NonNull String url) {
+        File path = getMediaMetadataPath();
+        YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
+        request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
+        request.addOption("--write-info-json");
+        request.addOption("--write-description");
+        request.addOption("--skip-download");
+
+        Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().execute(request, callback))
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(youtubeDLResponse -> {
+                Toast.makeText(getApplicationContext(), getText(R.string.downloadSuccess), Toast.LENGTH_SHORT).show();
+                downloadInfo.setVisibility(View.GONE);
+                downloadProgress.setVisibility(View.GONE);
+                exploreInput.setText(null);
+            }, e -> {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();
+                downloadInfo.setVisibility(View.GONE);
+                downloadProgress.setVisibility(View.GONE);
+                exploreInput.setText(null);
+            });
+        compositeDisposable.add(disposable);
+    }
+
     private void mediaDownloader(@NonNull String url) {
         File path = getMediaDownloadPath();
         YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
@@ -434,12 +469,7 @@ public class MainActivity extends TabActivity {
         Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().execute(request, callback))
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(youtubeDLResponse -> {
-                Toast.makeText(getApplicationContext(), getText(R.string.downloadSuccess), Toast.LENGTH_SHORT).show();
-                downloadInfo.setVisibility(View.GONE);
-                downloadProgress.setVisibility(View.GONE);
-                exploreInput.setText(null);
-            }, e -> {
+            .subscribe(youtubeDLResponse -> getMediaMetadata(url), e -> {
                 e.printStackTrace();
                 Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();
                 downloadInfo.setVisibility(View.GONE);
