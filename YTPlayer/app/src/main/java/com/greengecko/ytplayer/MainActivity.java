@@ -381,7 +381,11 @@ public class MainActivity extends TabActivity {
     }
 
     private File getMediaDownloadPath() {
-        return new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "YT Player");
+        return new File(getApplicationContext().getFilesDir(), "YT Player");
+    }
+
+    private File getMediaMetadataPath() {
+        return new File(getApplicationContext().getDataDir(), "YT Player");
     }
 
     private void mediaDownloader(@NonNull String url) {
