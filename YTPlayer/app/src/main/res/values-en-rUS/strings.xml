@@ -33,6 +33,7 @@
     <string name="removeMediaMsg">This action cannot be rolled back.</string>
     <string name="removeAction">Delete</string>
     <string name="removeActionFail">The selected media cannot be deleted.</string>
+    <string name="playActionFail">The selected media cannot be played.</string>
     <string name="title">Title</string>
     <string name="author">Uploader</string>
     <string name="mediaURL">Enter the media URL</string>

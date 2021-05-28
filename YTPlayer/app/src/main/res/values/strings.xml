@@ -48,6 +48,7 @@
     <string name="removeMediaMsg">이 동작은 되돌릴 수 없습니다.</string>
     <string name="removeAction">삭제</string>
     <string name="removeActionFail">선택된 미디어를 제거할 수 없습니다.</string>
+    <string name="playActionFail">선택된 미디어를 재생할 수 없습니다.</string>
 
     <string name="title">제목</string>
     <string name="author">업로더</string>

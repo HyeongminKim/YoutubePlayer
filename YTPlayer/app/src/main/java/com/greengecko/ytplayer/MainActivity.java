@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,6 +35,8 @@ import com.yausername.youtubedl_android.YoutubeDL;
 import com.yausername.youtubedl_android.YoutubeDLException;
 import com.yausername.youtubedl_android.YoutubeDLRequest;
 import com.yausername.youtubedl_android.mapper.VideoInfo;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -212,6 +215,18 @@ public class MainActivity extends TabActivity {
         library.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
+                try {
+                    JSONObject json = info.getMetadata(getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json");
+                    //TODO: 하드 코딩된 JSONObject 값을 다른 미디어에도 적용이 될 수 있도록 변수화할 것
+                    if(!getMediaInfo(json.getJSONObject("midpbHJ4EIk").getString("URL").replace("\\", "")).getTitle().equals(json.getJSONObject("midpbHJ4EIk").getString("TITLE"))) {
+                        throw new NullPointerException();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), getText(R.string.playActionFail), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(getApplicationContext(), MediaPlayer.class);
                 intent.putExtra("src", getMediaDownloadPath().getPath() + "/" + libraryItems.get(position));
                 startActivity(intent);
@@ -325,6 +340,61 @@ public class MainActivity extends TabActivity {
         }
     }
 
+    private void mediaDeleteRecent(String fileName) {
+        String  mediaLocation = getMediaDownloadPath().getPath() + "/";
+        String  metaDataLocation = getMediaMetadataPath().getPath() + "/";
+        long    lastMedia = Integer.MIN_VALUE,
+                lastDescription = Integer.MIN_VALUE,
+                lastInfo = Integer.MIN_VALUE;
+        File[]  listedMedia = new File(mediaLocation).listFiles(),
+                listedDescription = new File(metaDataLocation).listFiles(),
+                listedInfo = new File(metaDataLocation).listFiles();
+
+        File    target = null;
+
+        if(listedMedia != null && listedMedia.length > 0) {
+            for(File file : listedMedia) {
+                if(lastMedia < file.lastModified() && file.getName().substring(0, fileName.lastIndexOf('.')).equals(fileName)) {
+                    lastMedia = file.lastModified();
+                    target = file;
+                }
+            }
+            if(target != null) {
+                target.delete();
+                target = null;
+            }
+        }
+
+        if(listedDescription != null && listedDescription.length > 0) {
+            for(File file : listedDescription) {
+                if(file.getName().toLowerCase().endsWith("." + "description")) {
+                    if(lastDescription < file.lastModified() && file.getName().equals(fileName + ".description")) {
+                        lastDescription = file.lastModified();
+                        target = file;
+                    }
+                }
+            }
+            if(target != null) {
+                target.delete();
+                target = null;
+            }
+        }
+
+        if(listedInfo != null && listedInfo.length > 0) {
+            for(File file : listedInfo) {
+                if(file.getName().toLowerCase().endsWith("." + "info.json")) {
+                    if(lastInfo < file.lastModified() && file.getName().equals(fileName + ".info.json")) {
+                        lastInfo = file.lastModified();
+                        target = file;
+                    }
+                }
+            }
+            if(target != null) {
+                target.delete();
+            }
+        }
+    }
+
     private boolean dependenceInitialize(Context context) {
         try {
             YoutubeDL.getInstance().init(context);
@@ -382,9 +452,20 @@ public class MainActivity extends TabActivity {
         File path = getMediaMetadataPath();
         YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
         request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
-        request.addOption("--write-info-json");
         request.addOption("--write-description");
         request.addOption("--skip-download");
+
+        try {
+            MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
+            info.createMetadata(getMediaInfo(url).getId(), getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader(), url.trim(), getMediaInfo(url).getTags(), getMediaInfo(url).getThumbnail(), Double.parseDouble(getMediaInfo(url).getAverageRating()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();
+            downloadInfo.setVisibility(View.GONE);
+            downloadProgress.setVisibility(View.GONE);
+            mediaDeleteRecent(getMediaInfo(url).getTitle());
+            return;
+        }
 
         Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().execute(request, callback))
             .subscribeOn(Schedulers.newThread())
@@ -400,6 +481,7 @@ public class MainActivity extends TabActivity {
                 downloadInfo.setVisibility(View.GONE);
                 downloadProgress.setVisibility(View.GONE);
                 exploreInput.setText(null);
+                mediaDeleteRecent(getMediaInfo(url).getTitle());
             });
         compositeDisposable.add(disposable);
     }
