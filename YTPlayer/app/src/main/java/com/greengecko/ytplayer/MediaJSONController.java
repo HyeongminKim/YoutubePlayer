@@ -31,7 +31,7 @@ public class MediaJSONController {
         source.put("TITLE", title);
         source.put("UPLOADER", uploader);
         source.put("URL", sourceUrl);
-        source.put("PATH", tags);
+        source.put("TAG", tags);
         source.put("THUMBNAIL", thumbnailUrl);
         source.put("RATING", averageRating);
 
