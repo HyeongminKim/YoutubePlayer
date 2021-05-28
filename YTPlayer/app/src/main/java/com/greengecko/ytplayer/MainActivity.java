@@ -1,16 +1,12 @@
 package com.greengecko.ytplayer;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,7 +27,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 
 import com.yausername.ffmpeg.FFmpeg;
 import com.yausername.youtubedl_android.DownloadProgressCallback;
@@ -184,12 +179,7 @@ public class MainActivity extends TabActivity {
                     return false;
                 }
 
-                if(isStoragePermissionGranted()) {
-                    mediaDownloader(exploreInput.getText().toString());
-                } else {
-                    Toast.makeText(getApplicationContext(), getText(R.string.accessFailDownloads), Toast.LENGTH_SHORT).show();
-                }
-
+                mediaDownloader(exploreInput.getText().toString());
                 return true;
             }
         });
@@ -237,26 +227,7 @@ public class MainActivity extends TabActivity {
                 deleteMedia.setPositiveButton(getText(R.string.removeAction), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String mediaLocation = getMediaDownloadPath().getPath() + "/" + libraryItems.get(position);
-                        String metaDataDescription = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".description";
-                        String metaDataInfo = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json";
-                        try {
-                            File mediaPath = new File(mediaLocation);
-                            File descriptionPath = new File(metaDataDescription);
-                            File infoPath = new File(metaDataInfo);
-                            if (mediaPath.exists() && descriptionPath.exists() && infoPath.exists()) {
-                                mediaPath.delete();
-                                descriptionPath.delete();
-                                infoPath.delete();
-                                rowAdder();
-                            } else {
-                                throw new FileNotFoundException();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), getText(R.string.removeActionFail), Toast.LENGTH_SHORT).show();
-                            rowAdder();
-                        }
+                        mediaDelete(position);
                     }
                 });
                 deleteMedia.show();
@@ -331,16 +302,26 @@ public class MainActivity extends TabActivity {
         library.setAdapter(libraryAdapter);
     }
 
-    private boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                return true;
+    private void mediaDelete(int index) {
+        String mediaLocation = getMediaDownloadPath().getPath() + "/" + libraryItems.get(index);
+        String metaDataDescription = getMediaMetadataPath().getPath() + "/" + libraryItems.get(index).substring(0, libraryItems.get(index).lastIndexOf('.')) + ".description";
+        String metaDataInfo = getMediaMetadataPath().getPath() + "/" + libraryItems.get(index).substring(0, libraryItems.get(index).lastIndexOf('.')) + ".info.json";
+        try {
+            File mediaPath = new File(mediaLocation);
+            File descriptionPath = new File(metaDataDescription);
+            File infoPath = new File(metaDataInfo);
+            if (mediaPath.exists() && descriptionPath.exists() && infoPath.exists()) {
+                mediaPath.delete();
+                descriptionPath.delete();
+                infoPath.delete();
+                rowAdder();
             } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                return false;
+                throw new FileNotFoundException();
             }
-        } else {
-            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), getText(R.string.removeActionFail), Toast.LENGTH_SHORT).show();
+            rowAdder();
         }
     }
 
