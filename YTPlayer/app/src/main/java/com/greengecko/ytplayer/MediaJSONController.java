@@ -49,6 +49,30 @@ public class MediaJSONController {
         buffer.close();
     }
 
+    private JSONObject getMetadata(String path) throws JSONException, IOException {
+        FileInputStream jsonInput = new FileInputStream(path);
+        InputStreamReader jsonReader = new InputStreamReader(jsonInput);
+        BufferedReader buffer = new BufferedReader(jsonReader);
+        return new JSONObject(buffer.readLine());
+    }
+
+    public String getMediaID(String path, String title, String uploader) {
+        try {
+            JSONObject json = getMetadata(path);
+            json.names();
+            for (int i = 0; i < json.names().length(); i++) {
+                Log.println(Log.DEBUG, "JSON_ID", json.names().getString(i));
+                if(getString(path, json.names().getString(i), "TITLE").equals(title) && getString(path, json.names().getString(i), "UPLOADER").equals(uploader)) {
+                    return json.names().getString(i);
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public String getString(String path, String id, String name) {
         try {
             return getMetadata(path).getJSONObject(id).getString(name);
@@ -88,13 +112,6 @@ public class MediaJSONController {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private JSONObject getMetadata(String path) throws JSONException, IOException {
-        FileInputStream jsonInput = new FileInputStream(path);
-        InputStreamReader jsonReader = new InputStreamReader(jsonInput);
-        BufferedReader buffer = new BufferedReader(jsonReader);
-        return new JSONObject(buffer.readLine());
     }
 }
 
