@@ -228,10 +228,9 @@ public class MainActivity extends TabActivity {
                 if(initialized) {
                     MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
                     try {
-                        //TODO: 하드 코딩된 uploader 값을 다른 미디어에도 적용이 될 수 있도록 변수화할 것
                         String path = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json";
                         String target = libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.'));
-                        if (!getMediaInfo(info.getURL(path, info.getMediaID(path, target, "NoCopyrightSounds"), "URL")).getTitle().equals(info.getString(path, info.getMediaID(path, target, "NoCopyrightSounds"), "TITLE"))) {
+                        if (!getMediaInfo(info.getURL(path, info.getMediaID(path, target), "URL")).getTitle().equals(info.getString(path, info.getMediaID(path, target), "TITLE"))) {
                             throw new NullPointerException();
                         }
                     } catch (Exception e) {
