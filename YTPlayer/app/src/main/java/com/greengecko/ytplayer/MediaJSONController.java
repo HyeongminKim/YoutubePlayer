@@ -1,6 +1,5 @@
 package com.greengecko.ytplayer;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -24,11 +23,12 @@ public class MediaJSONController {
         this.metadataDir = metadataDir;
     }
 
-    public void createMetadata(Context context, String sourceID, String title, String uploader, String sourceUrl, ArrayList<String> tags, String thumbnailUrl, double averageRating) throws JSONException, IOException {
+    public void createMetadata(String sourceID, String title, String uploader, String sourceUrl, ArrayList<String> tags, String thumbnailUrl, double averageRating) throws JSONException, IOException {
         JSONObject object = new JSONObject();
         JSONObject source = new JSONObject();
+        String usableTitle = title.replaceAll("[|\\\\?*<\":>/]", "_");
 
-        source.put("TITLE", title);
+        source.put("TITLE", usableTitle);
         source.put("UPLOADER", uploader);
         source.put("URL", sourceUrl);
         source.put("TAG", tags);
@@ -38,7 +38,7 @@ public class MediaJSONController {
         object.put(sourceID, source);
         Log.println(Log.DEBUG, "JSON_INIT", object.toString());
 
-        String metaDataInfo = metadataDir + "/" + title + ".info.json";
+        String metaDataInfo = metadataDir + "/" + usableTitle + ".info.json";
         File infoPath = new File(metaDataInfo);
         File directory = new File(metadataDir);
         if (!directory.exists()) {

@@ -230,7 +230,7 @@ public class MainActivity extends TabActivity {
                     try {
                         String path = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json";
                         String target = libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.'));
-                        if (!getMediaInfo(info.getURL(path, info.getMediaID(path, target), "URL")).getTitle().equals(info.getString(path, info.getMediaID(path, target), "TITLE"))) {
+                        if (!getMediaInfo(info.getURL(path, info.getMediaID(path, target), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(path, info.getMediaID(path, target), "TITLE"))) {
                             throw new NullPointerException();
                         }
                     } catch (Exception e) {
@@ -471,7 +471,7 @@ public class MainActivity extends TabActivity {
 
         try {
             MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
-            info.createMetadata(getApplicationContext(), getMediaInfo(url).getId(), getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader(), url.trim(), getMediaInfo(url).getTags(), getMediaInfo(url).getThumbnail(), Double.parseDouble(getMediaInfo(url).getAverageRating()));
+            info.createMetadata(getMediaInfo(url).getId(), getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader(), url.trim(), getMediaInfo(url).getTags(), getMediaInfo(url).getThumbnail(), Double.parseDouble(getMediaInfo(url).getAverageRating()));
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();
