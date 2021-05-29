@@ -455,11 +455,11 @@ public class MainActivity extends TabActivity {
     }
 
     private File getMediaDownloadPath() {
-        return new File(getApplicationContext().getFilesDir(), "YT Player");
+        return new File(getApplicationContext().getFilesDir(), "media");
     }
 
     private File getMediaMetadataPath() {
-        return new File(getApplicationContext().getDataDir(), "YT Player");
+        return new File(getApplicationContext().getFilesDir(), "data");
     }
 
     private void getMediaMetadata(@NonNull String url) {
@@ -471,7 +471,7 @@ public class MainActivity extends TabActivity {
 
         try {
             MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
-            info.createMetadata(getMediaInfo(url).getId(), getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader(), url.trim(), getMediaInfo(url).getTags(), getMediaInfo(url).getThumbnail(), Double.parseDouble(getMediaInfo(url).getAverageRating()));
+            info.createMetadata(getApplicationContext(), getMediaInfo(url).getId(), getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader(), url.trim(), getMediaInfo(url).getTags(), getMediaInfo(url).getThumbnail(), Double.parseDouble(getMediaInfo(url).getAverageRating()));
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();

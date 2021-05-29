@@ -1,5 +1,6 @@
 package com.greengecko.ytplayer;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,10 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class MediaJSONController {
         this.metadataDir = metadataDir;
     }
 
-    public void createMetadata(String sourceID, String title, String uploader, String sourceUrl, ArrayList<String> tags, String thumbnailUrl, double averageRating) throws JSONException, IOException {
+    public void createMetadata(Context context, String sourceID, String title, String uploader, String sourceUrl, ArrayList<String> tags, String thumbnailUrl, double averageRating) throws JSONException, IOException {
         JSONObject object = new JSONObject();
         JSONObject source = new JSONObject();
 
@@ -40,13 +40,16 @@ public class MediaJSONController {
 
         String metaDataInfo = metadataDir + "/" + title + ".info.json";
         File infoPath = new File(metaDataInfo);
+        File directory = new File(metadataDir);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
         if (infoPath.exists()) {
             infoPath.delete();
         }
-        FileWriter writer = new FileWriter(metaDataInfo);
-        BufferedWriter buffer = new BufferedWriter(writer);
-        buffer.write(object.toString());
-        buffer.close();
+        FileOutputStream writer = new FileOutputStream(metaDataInfo, false);
+        writer.write(object.toString().getBytes());
+        writer.close();
     }
 
     private JSONObject getMetadata(String path) throws JSONException, IOException {
