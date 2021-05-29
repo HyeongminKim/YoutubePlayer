@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -64,6 +63,7 @@ public class MainActivity extends TabActivity {
 
     private ArrayList<String>     libraryItems;
     private String[]              convertibleItems;
+    private boolean               initialized;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,16 +107,16 @@ public class MainActivity extends TabActivity {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         mediaConvertExtension.setAdapter(adapter);
-
-        tabAdder(host, "LIBRARY", getString(R.string.library), R.id.tabLibrary);
-        tabAdder(host, "EXPLORE", getString(R.string.explore), R.id.tabExplore);
-        tabAdder(host, "INFO", getString(R.string.info), R.id.tabInfo);
-
         mediaConvertExtension.setSelection(0);
         mediaConvert = convertibleItems[0];
 
         if(dependenceInitialize(getApplicationContext())) {
             Toast.makeText(this, getText(R.string.packageInitSuccess), Toast.LENGTH_SHORT).show();
+            dependenceUpdate();
+            initialized = true;
+            tabAdder(host, "LIBRARY", getString(R.string.library), R.id.tabLibrary);
+            tabAdder(host, "EXPLORE", getString(R.string.explore), R.id.tabExplore);
+            tabAdder(host, "INFO", getString(R.string.info), R.id.tabInfo);
         } else {
             AlertDialog.Builder fatalError = new AlertDialog.Builder(MainActivity.this);
             fatalError.setTitle(getText(R.string.packageInitFail));
@@ -125,19 +125,23 @@ public class MainActivity extends TabActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     openWeb("https://github.com/HyeongminKim/YoutubePlayer/issues");
-                    finish();
+                    View view = findViewById(R.id.tabExplore);
+                    view.setVisibility(View.GONE);
+                    tabAdder(host, "LIBRARY", getString(R.string.library), R.id.tabLibrary);
+                    tabAdder(host, "INFO", getString(R.string.info), R.id.tabInfo);
                 }
             });
             fatalError.setPositiveButton(getText(R.string.dialogOK), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    finish();
+                    View view = findViewById(R.id.tabExplore);
+                    view.setVisibility(View.GONE);
+                    tabAdder(host, "LIBRARY", getString(R.string.library), R.id.tabLibrary);
+                    tabAdder(host, "INFO", getString(R.string.info), R.id.tabInfo);
                 }
             });
             fatalError.show();
         }
-
-        dependenceUpdate();
     }
 
     private void setAction() {
@@ -164,7 +168,15 @@ public class MainActivity extends TabActivity {
         goExplore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                host.setCurrentTab(1);
+                if(initialized) {
+                    host.setCurrentTab(1);
+                } else {
+                    AlertDialog.Builder fatalError = new AlertDialog.Builder(MainActivity.this);
+                    fatalError.setTitle(getText(R.string.packageInitFail));
+                    fatalError.setMessage(getText(R.string.packageInitFailMsg));
+                    fatalError.setPositiveButton(getText(R.string.dialogOK), null);
+                    fatalError.show();
+                }
             }
         });
 
@@ -215,17 +227,21 @@ public class MainActivity extends TabActivity {
         library.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
-                try {
-                    JSONObject json = info.getMetadata(getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json");
-                    //TODO: 하드 코딩된 JSONObject 값을 다른 미디어에도 적용이 될 수 있도록 변수화할 것
-                    if(!getMediaInfo(json.getJSONObject("midpbHJ4EIk").getString("URL").replace("\\", "")).getTitle().equals(json.getJSONObject("midpbHJ4EIk").getString("TITLE"))) {
-                        throw new NullPointerException();
+                if(initialized) {
+                    MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
+                    try {
+                        JSONObject json = info.getMetadata(getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json");
+                        //TODO: 하드 코딩된 JSONObject 값을 다른 미디어에도 적용이 될 수 있도록 변수화할 것
+                        if (!getMediaInfo(json.getJSONObject("midpbHJ4EIk").getString("URL").replace("\\", "")).getTitle().equals(json.getJSONObject("midpbHJ4EIk").getString("TITLE"))) {
+                            throw new NullPointerException();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), getText(R.string.playActionFail), Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), getText(R.string.playActionFail), Toast.LENGTH_SHORT).show();
-                    return;
+                } else {
+                    Toast.makeText(getApplicationContext(), getText(R.string.failToParseMediaInfo), Toast.LENGTH_SHORT).show();
                 }
                 Intent intent = new Intent(getApplicationContext(), MediaPlayer.class);
                 intent.putExtra("src", getMediaDownloadPath().getPath() + "/" + libraryItems.get(position));

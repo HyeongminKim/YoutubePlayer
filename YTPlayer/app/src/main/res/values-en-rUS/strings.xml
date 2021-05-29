@@ -21,7 +21,7 @@
     <string name="dialogCancel">Cancel</string>
     <string name="packageInitSuccess">Package initialization successful</string>
     <string name="packageInitFail">Package initialization failed</string>
-    <string name="packageInitFailMsg">The dependency package could not be initialized and the app terminated.</string>
+    <string name="packageInitFailMsg">Dependency package could not be initialized and some features are not available.</string>
     <string name="packageInitFailReport">Reporting issues</string>
     <string name="packageUpdating">Updating package</string>
     <string name="packageUpdateSuccess">Package update successful</string>

@@ -31,7 +31,7 @@
 
     <string name="packageInitSuccess">패키지 초기화 성공</string>
     <string name="packageInitFail">패키지 초기화 실패</string>
-    <string name="packageInitFailMsg">의존성 패키지를 초기화할 수 없어 앱을 종료합니다.</string>
+    <string name="packageInitFailMsg">의존성 패키지를 초기화할 수 없어 일부 기능을 사용할 수 없습니다.</string>
     <string name="packageInitFailReport">이슈 제보</string>
 
     <string name="packageUpdating">패키지 업데이트 중</string>
