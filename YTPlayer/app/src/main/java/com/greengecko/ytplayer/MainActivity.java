@@ -35,8 +35,6 @@ import com.yausername.youtubedl_android.YoutubeDLException;
 import com.yausername.youtubedl_android.YoutubeDLRequest;
 import com.yausername.youtubedl_android.mapper.VideoInfo;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -230,9 +228,9 @@ public class MainActivity extends TabActivity {
                 if(initialized) {
                     MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
                     try {
-                        JSONObject json = info.getMetadata(getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json");
                         //TODO: 하드 코딩된 JSONObject 값을 다른 미디어에도 적용이 될 수 있도록 변수화할 것
-                        if (!getMediaInfo(json.getJSONObject("midpbHJ4EIk").getString("URL").replace("\\", "")).getTitle().equals(json.getJSONObject("midpbHJ4EIk").getString("TITLE"))) {
+                        String path = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json";
+                        if (!getMediaInfo(info.getURL(path, "midpbHJ4EIk", "URL")).getTitle().equals(info.getString(path, "midpbHJ4EIk", "TITLE"))) {
                             throw new NullPointerException();
                         }
                     } catch (Exception e) {

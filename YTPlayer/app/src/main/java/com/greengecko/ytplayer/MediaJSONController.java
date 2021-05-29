@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -49,7 +49,48 @@ public class MediaJSONController {
         buffer.close();
     }
 
-    public JSONObject getMetadata(String path) throws JSONException, IOException {
+    public String getString(String path, String id, String name) {
+        try {
+            return getMetadata(path).getJSONObject(id).getString(name);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String getURL(String path, String id, String name) {
+        try {
+            return getMetadata(path).getJSONObject(id).getString(name).replace("\\", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public double getRating(String path, String id) {
+        try {
+            return getMetadata(path).getJSONObject(id).getDouble("RATING");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Integer.MIN_VALUE;
+        }
+    }
+
+    public ArrayList<String> getTags(String path, String id) {
+        try {
+            ArrayList<String> result = new ArrayList<>();
+            JSONArray input = getMetadata(path).getJSONObject(id).getJSONArray("TAG");
+            for (int i = 0; i < input.length(); i++) {
+                result.add(input.getString(i));
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private JSONObject getMetadata(String path) throws JSONException, IOException {
         FileInputStream jsonInput = new FileInputStream(path);
         InputStreamReader jsonReader = new InputStreamReader(jsonInput);
         BufferedReader buffer = new BufferedReader(jsonReader);
