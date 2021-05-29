@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -97,6 +98,7 @@ public class MediaPlayer extends AppCompatActivity {
         DataSource.Factory factory = new DefaultDataSourceFactory(this, "YTExoPlayer");
         ProgressiveMediaSource source = new ProgressiveMediaSource.Factory(factory).createMediaSource(videoSrc);
         player.prepare(source);
+        player.setWakeMode(PowerManager.PARTIAL_WAKE_LOCK);
 
         player.setPlayWhenReady(true);
     }
