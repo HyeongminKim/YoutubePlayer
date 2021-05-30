@@ -471,7 +471,7 @@ public class MainActivity extends TabActivity {
 
         try {
             MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
-            info.createMetadata(getMediaInfo(url).getId(), getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader(), url.trim(), getMediaInfo(url).getTags(), getMediaInfo(url).getThumbnail(), Double.parseDouble(getMediaInfo(url).getAverageRating()));
+            info.createMetadata(getMediaInfo(url).getId(), getMediaInfo(url).getTitle(), getMediaInfo(url).getUploader(), url.trim(), getMediaInfo(url).getThumbnail(), Double.parseDouble(getMediaInfo(url).getAverageRating()));
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();
