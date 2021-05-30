@@ -15,11 +15,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class MediaJSONController {
-    private String metadataDir;
     private String metadataPath;
 
     public MediaJSONController(@NonNull String metadataDir) {
-        this.metadataDir = metadataDir;
         metadataPath = metadataDir + "/media.info.json";
     }
 
@@ -57,6 +55,8 @@ public class MediaJSONController {
         try {
             JSONObject source = new JSONObject(getMetadata().toString());
             if(append) {
+                if(!source.isNull(targetID) && source.has(targetID)) return;
+
                 input = new JSONObject(json);
                 output = new JSONObject();
 
