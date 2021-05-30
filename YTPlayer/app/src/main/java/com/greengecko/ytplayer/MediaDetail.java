@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class MediaDetail extends AppCompatActivity {
     private Button delete, origin, play;
 
-    private String mediaDownloadPath, mediaMetadataPath, mediaURL;
+    private String mediaDownloadPath, mediaMetadataPath, mediaURL, mediaID;
     private ArrayList<String> libraryItems;
     private int mediaIndex;
     private boolean mediaDeleted;
@@ -55,6 +55,7 @@ public class MediaDetail extends AppCompatActivity {
         rating.setMax(5);
         rating.setRating((float)intent.getExtras().getDouble("rating"));
 
+        mediaID = intent.getExtras().getString("id");
         mediaURL = intent.getExtras().getString("url");
         mediaDownloadPath = intent.getExtras().getString("download");
         mediaMetadataPath = intent.getExtras().getString("metadata");
@@ -122,15 +123,14 @@ public class MediaDetail extends AppCompatActivity {
     private void mediaDelete() {
         String mediaLocation = mediaDownloadPath + "/" + libraryItems.get(mediaIndex);
         String metaDataDescription = mediaMetadataPath + "/" + libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')) + ".description";
-        String metaDataInfo = mediaMetadataPath + "/" + libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')) + ".info.json";
         try {
             File mediaPath = new File(mediaLocation);
             File descriptionPath = new File(metaDataDescription);
-            File infoPath = new File(metaDataInfo);
-            if (mediaPath.exists() && descriptionPath.exists() && infoPath.exists()) {
+            if (mediaPath.exists() && descriptionPath.exists()) {
                 mediaPath.delete();
                 descriptionPath.delete();
-                infoPath.delete();
+                MediaJSONController info = new MediaJSONController(mediaMetadataPath);
+                info.deleteMediaMetadata(mediaID);
                 mediaDeleted = true;
                 returnToLibrary();
             } else {

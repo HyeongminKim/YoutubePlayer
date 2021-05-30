@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,13 +13,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 public class MediaJSONController {
     private String metadataDir;
+    private String metadataPath;
 
     public MediaJSONController(@NonNull String metadataDir) {
         this.metadataDir = metadataDir;
+        metadataPath = metadataDir + "/media.info.json";
     }
 
     public void createMetadata(String sourceID, String title, String uploader, String sourceUrl, String thumbnailUrl, double averageRating) throws JSONException, IOException {
@@ -37,34 +37,70 @@ public class MediaJSONController {
         object.put(sourceID, source);
         Log.println(Log.DEBUG, "JSON_INIT", object.toString());
 
-        String metaDataInfo = metadataDir + "/" + usableTitle + ".info.json";
-        File infoPath = new File(metaDataInfo);
         File directory = new File(metadataDir);
         if (!directory.exists()) {
             directory.mkdir();
         }
-        if (infoPath.exists()) {
-            infoPath.delete();
+        if(new File(metadataPath).exists()) {
+            commitMetadata(object.toString(), sourceID, true);
+        } else {
+            FileOutputStream writer = new FileOutputStream(metadataPath, false);
+            writer.write(object.toString().getBytes());
+            writer.close();
         }
-        FileOutputStream writer = new FileOutputStream(metaDataInfo, false);
-        writer.write(object.toString().getBytes());
-        writer.close();
     }
 
-    private JSONObject getMetadata(String path) throws JSONException, IOException {
-        FileInputStream jsonInput = new FileInputStream(path);
+    private JSONObject getMetadata() throws JSONException, IOException {
+        FileInputStream jsonInput = new FileInputStream(metadataPath);
         InputStreamReader jsonReader = new InputStreamReader(jsonInput);
         BufferedReader buffer = new BufferedReader(jsonReader);
         return new JSONObject(buffer.readLine());
     }
 
-    public String getMediaID(String path, String title) {
+    private void commitMetadata(String json, String targetID, boolean append) {
+        JSONObject input, output;
         try {
-            JSONObject json = getMetadata(path);
+            JSONObject source = new JSONObject(getMetadata().toString());
+            if(append) {
+                input = new JSONObject(json);
+                output = new JSONObject();
+
+                output.put("TITLE", input.getJSONObject(targetID).getString("TITLE"));
+                output.put("UPLOADER", input.getJSONObject(targetID).getString("UPLOADER"));
+                output.put("URL", input.getJSONObject(targetID).getString("URL"));
+                output.put("THUMBNAIL", input.getJSONObject(targetID).getString("THUMBNAIL"));
+                output.put("RATING", input.getJSONObject(targetID).getDouble("RATING"));
+                source.put(targetID, output);
+            } else {
+                source = new JSONObject(json);
+            }
+            FileOutputStream writer = new FileOutputStream(metadataPath, false);
+            writer.write(source.toString().getBytes());
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteMediaMetadata(String id) {
+        try {
+            Log.println(Log.DEBUG, "CAT", getMetadata().toString());
+            JSONObject object = new JSONObject(getMetadata().toString());
+            object.remove(id);
+            Log.println(Log.DEBUG, "JSON_DEL", object.toString());
+            commitMetadata(object.toString(), id, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getMediaID(String title) {
+        try {
+            JSONObject json = getMetadata();
             json.names();
             for (int i = 0; i < json.names().length(); i++) {
                 Log.println(Log.DEBUG, "JSON_ID", json.names().getString(i));
-                if(getString(path, json.names().getString(i), "TITLE").equals(title)) {
+                if(getString(json.names().getString(i), "TITLE").equals(title)) {
                     return json.names().getString(i);
                 }
             }
@@ -75,27 +111,27 @@ public class MediaJSONController {
         }
     }
 
-    public String getString(String path, String id, String name) {
+    public String getString(String id, String name) {
         try {
-            return getMetadata(path).getJSONObject(id).getString(name);
+            return getMetadata().getJSONObject(id).getString(name);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public String getURL(String path, String id, String name) {
+    public String getURL(String id, String name) {
         try {
-            return getMetadata(path).getJSONObject(id).getString(name).replace("\\", "");
+            return getMetadata().getJSONObject(id).getString(name).replace("\\", "");
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public double getRating(String path, String id) {
+    public double getRating(String id) {
         try {
-            return getMetadata(path).getJSONObject(id).getDouble("RATING");
+            return getMetadata().getJSONObject(id).getDouble("RATING");
         } catch (Exception e) {
             e.printStackTrace();
             return Integer.MIN_VALUE;

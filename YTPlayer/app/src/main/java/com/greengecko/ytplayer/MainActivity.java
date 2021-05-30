@@ -36,7 +36,6 @@ import com.yausername.youtubedl_android.YoutubeDLRequest;
 import com.yausername.youtubedl_android.mapper.VideoInfo;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import io.reactivex.Observable;
@@ -236,9 +235,8 @@ public class MainActivity extends TabActivity {
                 if(initialized) {
                     MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
                     try {
-                        String path = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json";
                         String target = libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.'));
-                        if (!getMediaInfo(info.getURL(path, info.getMediaID(path, target), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(path, info.getMediaID(path, target), "TITLE"))) {
+                        if (!getMediaInfo(info.getURL(info.getMediaID(target), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(info.getMediaID(target), "TITLE"))) {
                             throw new NullPointerException();
                         }
                     } catch (Exception e) {
@@ -260,16 +258,16 @@ public class MainActivity extends TabActivity {
                 if(initialized) {
                     MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
                     try {
-                        String path = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json";
                         String target = libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.'));
-                        if (!getMediaInfo(info.getURL(path, info.getMediaID(path, target), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(path, info.getMediaID(path, target), "TITLE"))) {
+                        if (!getMediaInfo(info.getURL(info.getMediaID(target), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(info.getMediaID(target), "TITLE"))) {
                             throw new NullPointerException();
                         }
                         Intent intent = new Intent(getApplicationContext(), MediaDetail.class);
-                        intent.putExtra("title", info.getString(path, info.getMediaID(path, target), "TITLE"));
-                        intent.putExtra("author", info.getString(path, info.getMediaID(path, target), "UPLOADER"));
-                        intent.putExtra("rating", info.getRating(path, info.getMediaID(path, target)));
-                        intent.putExtra("url", info.getURL(path, info.getMediaID(path, target), "URL"));
+                        intent.putExtra("title", info.getString(info.getMediaID(target), "TITLE"));
+                        intent.putExtra("author", info.getString(info.getMediaID(target), "UPLOADER"));
+                        intent.putExtra("rating", info.getRating(info.getMediaID(target)));
+                        intent.putExtra("url", info.getURL(info.getMediaID(target), "URL"));
+                        intent.putExtra("id", info.getMediaID(target));
                         intent.putExtra("download", getMediaDownloadPath().getAbsolutePath());
                         intent.putExtra("metadata", getMediaMetadataPath().getAbsolutePath());
                         intent.putExtra("library", libraryItems);
@@ -353,38 +351,14 @@ public class MainActivity extends TabActivity {
         library.setAdapter(libraryAdapter);
     }
 
-    private void mediaDelete(int index) {
-        String mediaLocation = getMediaDownloadPath().getPath() + "/" + libraryItems.get(index);
-        String metaDataDescription = getMediaMetadataPath().getPath() + "/" + libraryItems.get(index).substring(0, libraryItems.get(index).lastIndexOf('.')) + ".description";
-        String metaDataInfo = getMediaMetadataPath().getPath() + "/" + libraryItems.get(index).substring(0, libraryItems.get(index).lastIndexOf('.')) + ".info.json";
-        try {
-            File mediaPath = new File(mediaLocation);
-            File descriptionPath = new File(metaDataDescription);
-            File infoPath = new File(metaDataInfo);
-            if (mediaPath.exists() && descriptionPath.exists() && infoPath.exists()) {
-                mediaPath.delete();
-                descriptionPath.delete();
-                infoPath.delete();
-                rowAdder();
-            } else {
-                throw new FileNotFoundException();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), getText(R.string.removeActionFail), Toast.LENGTH_SHORT).show();
-            rowAdder();
-        }
-    }
-
     private void mediaDeleteRecent(String fileName) {
         String  mediaLocation = getMediaDownloadPath().getPath() + "/";
         String  metaDataLocation = getMediaMetadataPath().getPath() + "/";
+        String  infoTarget;
         long    lastMedia = Integer.MIN_VALUE,
-                lastDescription = Integer.MIN_VALUE,
-                lastInfo = Integer.MIN_VALUE;
+                lastDescription = Integer.MIN_VALUE;
         File[]  listedMedia = new File(mediaLocation).listFiles(),
-                listedDescription = new File(metaDataLocation).listFiles(),
-                listedInfo = new File(metaDataLocation).listFiles();
+                listedDescription = new File(metaDataLocation).listFiles();
 
         File    target = null;
 
@@ -411,21 +385,9 @@ public class MainActivity extends TabActivity {
                 }
             }
             if(target != null) {
-                target.delete();
-                target = null;
-            }
-        }
-
-        if(listedInfo != null && listedInfo.length > 0) {
-            for(File file : listedInfo) {
-                if(file.getName().toLowerCase().endsWith("." + "info.json")) {
-                    if(lastInfo < file.lastModified() && file.getName().equals(fileName + ".info.json")) {
-                        lastInfo = file.lastModified();
-                        target = file;
-                    }
-                }
-            }
-            if(target != null) {
+                MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
+                infoTarget = info.getMediaID(target.getName().substring(0, fileName.lastIndexOf('.')));
+                info.deleteMediaMetadata(infoTarget);
                 target.delete();
             }
         }
