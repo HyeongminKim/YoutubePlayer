@@ -36,11 +36,6 @@ public class MediaJSONController {
 
         object.put(sourceID, source);
         Log.println(Log.DEBUG, "JSON_INIT", object.toString());
-
-        File directory = new File(metadataDir);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
         if(new File(metadataPath).exists()) {
             commitMetadata(object.toString(), sourceID, true);
         } else {

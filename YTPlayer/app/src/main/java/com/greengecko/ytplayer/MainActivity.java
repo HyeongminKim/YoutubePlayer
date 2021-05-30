@@ -439,11 +439,19 @@ public class MainActivity extends TabActivity {
     }
 
     private File getMediaDownloadPath() {
-        return new File(getApplicationContext().getFilesDir(), "media");
+        File path = new File(getApplicationContext().getFilesDir(), "media");
+        if (!path.exists()) {
+            path.mkdir();
+        }
+        return path;
     }
 
     private File getMediaMetadataPath() {
-        return new File(getApplicationContext().getFilesDir(), "data");
+        File path = new File(getApplicationContext().getFilesDir(), "data");
+        if (!path.exists()) {
+            path.mkdir();
+        }
+        return path;
     }
 
     private void getMediaMetadata(@NonNull String url) {
