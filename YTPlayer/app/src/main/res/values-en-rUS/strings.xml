@@ -29,6 +29,9 @@
     <string name="packageUpdateFail">Package update failed</string>
     <string name="accessFailDownloads">You do not have access to the download path.</string>
     <string name="convertTo">Convert to</string>
+    <string name="delete">delete</string>
+    <string name="show_original">show original</string>
+    <string name="play">play</string>
     <string name="removeMedia">Are you sure you want to delete the selected media?</string>
     <string name="removeMediaMsg">This action cannot be rolled back.</string>
     <string name="removeAction">Delete</string>

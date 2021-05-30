@@ -78,6 +78,14 @@ public class MainActivity extends TabActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(data != null && requestCode == 100 && resultCode == RESULT_OK) {
+            rowAdder();
+        }
+    }
+
     private void init() {
         host = getTabHost();
         exploreInput = findViewById(R.id.exploreInput);
@@ -249,18 +257,32 @@ public class MainActivity extends TabActivity {
         library.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-                AlertDialog.Builder deleteMedia = new AlertDialog.Builder(MainActivity.this);
-                deleteMedia.setTitle(getText(R.string.removeMedia));
-                deleteMedia.setMessage(getText(R.string.removeMediaMsg));
-                deleteMedia.setNegativeButton(getText(R.string.dialogCancel), null);
-                deleteMedia.setPositiveButton(getText(R.string.removeAction), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mediaDelete(position);
+                if(initialized) {
+                    MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
+                    try {
+                        String path = getMediaMetadataPath().getPath() + "/" + libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.')) + ".info.json";
+                        String target = libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.'));
+                        if (!getMediaInfo(info.getURL(path, info.getMediaID(path, target), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(path, info.getMediaID(path, target), "TITLE"))) {
+                            throw new NullPointerException();
+                        }
+                        Intent intent = new Intent(getApplicationContext(), MediaDetail.class);
+                        intent.putExtra("title", info.getString(path, info.getMediaID(path, target), "TITLE"));
+                        intent.putExtra("author", info.getString(path, info.getMediaID(path, target), "UPLOADER"));
+                        intent.putExtra("rating", info.getRating(path, info.getMediaID(path, target)));
+                        intent.putExtra("url", info.getURL(path, info.getMediaID(path, target), "URL"));
+                        intent.putExtra("download", getMediaDownloadPath().getAbsolutePath());
+                        intent.putExtra("metadata", getMediaMetadataPath().getAbsolutePath());
+                        intent.putExtra("library", libraryItems);
+                        intent.putExtra("index", position);
+                        startActivityForResult(intent, 100);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), getText(R.string.failToParseMediaInfo), Toast.LENGTH_SHORT).show();
+                        return true;
                     }
-                });
-                deleteMedia.show();
-
+                } else {
+                    Toast.makeText(getApplicationContext(), getText(R.string.failToParseMediaInfo), Toast.LENGTH_SHORT).show();
+                }
                 return true;
             }
         });
