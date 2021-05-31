@@ -42,6 +42,7 @@ public class MediaPlayer extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
         if(hasFocus) {
             hideSystemUI();
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
     }
 

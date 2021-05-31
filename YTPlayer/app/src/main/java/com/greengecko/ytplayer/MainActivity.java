@@ -66,6 +66,7 @@ public class MainActivity extends TabActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         init();
         setAction();
@@ -158,7 +159,7 @@ public class MainActivity extends TabActivity {
             public void onTabChanged(String tabId) {
                 String tabTag = getTabHost().getCurrentTabTag();
 
-                if(tabTag.equals("HOME")) {
+                if(tabTag.equals("INFO")) {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
                 } else {
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
