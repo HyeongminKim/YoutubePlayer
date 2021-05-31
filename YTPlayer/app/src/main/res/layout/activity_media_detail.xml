@@ -52,6 +52,7 @@
         <Button
             android:id="@+id/delete"
             android:text="@string/delete"
+            android:textColor="#ff0000"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"/>
