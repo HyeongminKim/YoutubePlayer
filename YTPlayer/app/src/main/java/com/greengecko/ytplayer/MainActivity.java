@@ -388,7 +388,11 @@ public class MainActivity extends TabActivity {
             if(target != null) {
                 MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
                 infoTarget = info.getMediaID(target.getName().substring(0, fileName.lastIndexOf('.')));
-                info.deleteMediaMetadata(infoTarget);
+                try {
+                    info.deleteMediaMetadata(infoTarget);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 target.delete();
             }
         }

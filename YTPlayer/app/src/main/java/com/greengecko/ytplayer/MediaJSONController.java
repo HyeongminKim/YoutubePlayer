@@ -47,59 +47,57 @@ public class MediaJSONController {
         }
     }
 
-    private JSONObject getMetadata() throws JSONException, IOException {
-        FileInputStream jsonInput = new FileInputStream(metadataPath);
-        InputStreamReader jsonReader = new InputStreamReader(jsonInput);
-        BufferedReader buffer = new BufferedReader(jsonReader);
-        return new JSONObject(buffer.readLine());
+    private JSONObject getMetadata() {
+        try {
+            FileInputStream jsonInput = new FileInputStream(metadataPath);
+            InputStreamReader jsonReader = new InputStreamReader(jsonInput);
+            BufferedReader buffer = new BufferedReader(jsonReader);
+            return new JSONObject(buffer.readLine());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    private void commitMetadata(String json, String targetID, boolean append) {
+    private void commitMetadata(String json, String targetID, boolean append) throws JSONException, IOException {
         JSONObject input, output;
-        try {
-            JSONObject source = new JSONObject(getMetadata().toString());
-            if(append) {
-                input = new JSONObject(json);
-                output = new JSONObject();
+        JSONObject source = new JSONObject(getMetadata().toString());
 
-                if(!source.isNull(targetID) && source.has(targetID)) {
-                    source.getJSONObject(targetID).put("COUNT", source.getJSONObject(targetID).getInt("COUNT") + 1);
-                } else {
-                    output.put("TITLE", input.getJSONObject(targetID).getString("TITLE"));
-                    output.put("UPLOADER", input.getJSONObject(targetID).getString("UPLOADER"));
-                    output.put("URL", input.getJSONObject(targetID).getString("URL"));
-                    output.put("THUMBNAIL", input.getJSONObject(targetID).getString("THUMBNAIL"));
-                    output.put("RATING", input.getJSONObject(targetID).getDouble("RATING"));
-                    output.put("COUNT", 0);
-                    source.put(targetID, output);
-                }
+        if(append) {
+            input = new JSONObject(json);
+            output = new JSONObject();
+
+            if(!source.isNull(targetID) && source.has(targetID)) {
+                source.getJSONObject(targetID).put("COUNT", source.getJSONObject(targetID).getInt("COUNT") + 1);
             } else {
-                input = new JSONObject(json);
-
-                if(source.getJSONObject(targetID).getInt("COUNT") > 0) {
-                    source.getJSONObject(targetID).put("COUNT", source.getJSONObject(targetID).getInt("COUNT") - 1);
-                } else {
-                    Log.println(Log.DEBUG, "CAT", input.toString());
-                    input.remove(targetID);
-                    Log.println(Log.DEBUG, "JSON_DEL", input.toString());
-
-                    source = new JSONObject(json);
-                }
+                output.put("TITLE", input.getJSONObject(targetID).getString("TITLE"));
+                output.put("UPLOADER", input.getJSONObject(targetID).getString("UPLOADER"));
+                output.put("URL", input.getJSONObject(targetID).getString("URL"));
+                output.put("THUMBNAIL", input.getJSONObject(targetID).getString("THUMBNAIL"));
+                output.put("RATING", input.getJSONObject(targetID).getDouble("RATING"));
+                output.put("COUNT", 0);
+                source.put(targetID, output);
             }
-            FileOutputStream writer = new FileOutputStream(metadataPath, false);
-            writer.write(source.toString().getBytes());
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            input = new JSONObject(json);
+
+            if(source.getJSONObject(targetID).getInt("COUNT") > 0) {
+                source.getJSONObject(targetID).put("COUNT", source.getJSONObject(targetID).getInt("COUNT") - 1);
+            } else {
+                Log.println(Log.DEBUG, "CAT", input.toString());
+                input.remove(targetID);
+                Log.println(Log.DEBUG, "JSON_DEL", input.toString());
+
+                source = new JSONObject(json);
+            }
         }
+        FileOutputStream writer = new FileOutputStream(metadataPath, false);
+        writer.write(source.toString().getBytes());
+        writer.close();
     }
 
-    public void deleteMediaMetadata(String id) {
-        try {
-            commitMetadata(getMetadata().toString(), id, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void deleteMediaMetadata(String id) throws JSONException, IOException {
+        commitMetadata(getMetadata().toString(), id, false);
     }
 
     public String getMediaID(String title) {
