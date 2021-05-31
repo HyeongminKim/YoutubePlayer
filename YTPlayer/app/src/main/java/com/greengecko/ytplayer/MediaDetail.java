@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -88,6 +90,16 @@ public class MediaDetail extends AppCompatActivity {
             public void onClick(View view) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mediaURL));
                 startActivity(browserIntent);
+            }
+        });
+        origin.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData content = ClipData.newPlainText("label", mediaURL);
+                clipboard.setPrimaryClip(content);
+                Toast.makeText(getApplicationContext(), getText(R.string.copyCompleted), Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
         play.setOnClickListener(new View.OnClickListener() {
