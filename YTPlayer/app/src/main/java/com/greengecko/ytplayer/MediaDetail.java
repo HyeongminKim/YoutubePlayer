@@ -140,8 +140,10 @@ public class MediaDetail extends AppCompatActivity {
             File descriptionPath = new File(metaDataDescription);
             if (mediaPath.exists() && descriptionPath.exists()) {
                 mediaPath.delete();
-                descriptionPath.delete();
                 MediaJSONController info = new MediaJSONController(mediaMetadataPath);
+                if(info.getCount(info.getMediaID(libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')))) == 0) {
+                    descriptionPath.delete();
+                }
                 info.deleteMediaMetadata(mediaID);
                 mediaDeleted = true;
                 returnToLibrary();

@@ -32,11 +32,15 @@ public class MediaJSONController {
         source.put("THUMBNAIL", thumbnailUrl);
         source.put("RATING", averageRating);
 
-        object.put(sourceID, source);
-        Log.println(Log.DEBUG, "JSON_INIT", object.toString());
         if(new File(metadataPath).exists()) {
+            object.put(sourceID, source);
+            Log.println(Log.DEBUG, "JSON_INIT", object.toString());
             commitMetadata(object.toString(), sourceID, true);
         } else {
+            source.put("COUNT", 0);
+            object.put(sourceID, source);
+            Log.println(Log.DEBUG, "JSON_INIT", object.toString());
+
             FileOutputStream writer = new FileOutputStream(metadataPath, false);
             writer.write(object.toString().getBytes());
             writer.close();
@@ -55,19 +59,32 @@ public class MediaJSONController {
         try {
             JSONObject source = new JSONObject(getMetadata().toString());
             if(append) {
-                if(!source.isNull(targetID) && source.has(targetID)) return;
-
                 input = new JSONObject(json);
                 output = new JSONObject();
 
-                output.put("TITLE", input.getJSONObject(targetID).getString("TITLE"));
-                output.put("UPLOADER", input.getJSONObject(targetID).getString("UPLOADER"));
-                output.put("URL", input.getJSONObject(targetID).getString("URL"));
-                output.put("THUMBNAIL", input.getJSONObject(targetID).getString("THUMBNAIL"));
-                output.put("RATING", input.getJSONObject(targetID).getDouble("RATING"));
-                source.put(targetID, output);
+                if(!source.isNull(targetID) && source.has(targetID)) {
+                    source.getJSONObject(targetID).put("COUNT", source.getJSONObject(targetID).getInt("COUNT") + 1);
+                } else {
+                    output.put("TITLE", input.getJSONObject(targetID).getString("TITLE"));
+                    output.put("UPLOADER", input.getJSONObject(targetID).getString("UPLOADER"));
+                    output.put("URL", input.getJSONObject(targetID).getString("URL"));
+                    output.put("THUMBNAIL", input.getJSONObject(targetID).getString("THUMBNAIL"));
+                    output.put("RATING", input.getJSONObject(targetID).getDouble("RATING"));
+                    output.put("COUNT", 0);
+                    source.put(targetID, output);
+                }
             } else {
-                source = new JSONObject(json);
+                input = new JSONObject(json);
+
+                if(source.getJSONObject(targetID).getInt("COUNT") > 0) {
+                    source.getJSONObject(targetID).put("COUNT", source.getJSONObject(targetID).getInt("COUNT") - 1);
+                } else {
+                    Log.println(Log.DEBUG, "CAT", input.toString());
+                    input.remove(targetID);
+                    Log.println(Log.DEBUG, "JSON_DEL", input.toString());
+
+                    source = new JSONObject(json);
+                }
             }
             FileOutputStream writer = new FileOutputStream(metadataPath, false);
             writer.write(source.toString().getBytes());
@@ -79,11 +96,7 @@ public class MediaJSONController {
 
     public void deleteMediaMetadata(String id) {
         try {
-            Log.println(Log.DEBUG, "CAT", getMetadata().toString());
-            JSONObject object = new JSONObject(getMetadata().toString());
-            object.remove(id);
-            Log.println(Log.DEBUG, "JSON_DEL", object.toString());
-            commitMetadata(object.toString(), id, false);
+            commitMetadata(getMetadata().toString(), id, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,6 +140,15 @@ public class MediaJSONController {
     public double getRating(String id) {
         try {
             return getMetadata().getJSONObject(id).getDouble("RATING");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Integer.MIN_VALUE;
+        }
+    }
+
+    public int getCount(String id) {
+        try {
+            return getMetadata().getJSONObject(id).getInt("COUNT");
         } catch (Exception e) {
             e.printStackTrace();
             return Integer.MIN_VALUE;
