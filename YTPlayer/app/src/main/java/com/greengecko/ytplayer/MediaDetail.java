@@ -8,6 +8,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -43,6 +44,7 @@ public class MediaDetail extends AppCompatActivity {
 
     private void init() {
         TextView title = findViewById(R.id.title);
+        TextView extension = findViewById(R.id.extension);
         TextView author = findViewById(R.id.author);
         TextView detail = findViewById(R.id.detail);
         RatingBar rating = findViewById(R.id.rating);
@@ -64,8 +66,17 @@ public class MediaDetail extends AppCompatActivity {
         libraryItems = intent.getExtras().getStringArrayList("library");
         mediaIndex = intent.getExtras().getInt("index");
 
-        detail.setText(textCat());
+        detail.setText(metadataReader());
         detail.setMovementMethod(new ScrollingMovementMethod());
+
+        String fileExtension = libraryItems.get(mediaIndex).substring(libraryItems.get(mediaIndex).lastIndexOf('.') + 1);
+        extension.setText(fileExtension);
+        if(fileExtension.toLowerCase().equals("mp3") || fileExtension.toLowerCase().equals("flac") || fileExtension.toLowerCase().equals("m4a") ||
+                fileExtension.toLowerCase().equals("wav")) {
+            extension.setTextColor(getColor(R.color.purple_500));
+        } else {
+            extension.setTextColor(Color.MAGENTA);
+        }
     }
 
     private void setAction() {
@@ -112,7 +123,7 @@ public class MediaDetail extends AppCompatActivity {
         });
     }
 
-    private String textCat() {
+    private String metadataReader() {
         String descriptionPath = mediaMetadataPath + "/" + libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')) + ".description";
         StringBuffer buffer = new StringBuffer();
         try {
