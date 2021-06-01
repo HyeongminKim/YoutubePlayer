@@ -1,5 +1,5 @@
 # YT Player
-안드로이드를 위한 유튜브 플레이어 (다운로드 가능)
+안드로이드 전용 다운로드 가능한 유튜브 플레이어
 
 ### Demo
 https://user-images.githubusercontent.com/25660580/118278574-195e3380-b505-11eb-8db2-0c91d39546b5.mp4
