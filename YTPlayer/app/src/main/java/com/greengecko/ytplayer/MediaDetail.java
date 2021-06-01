@@ -152,25 +152,25 @@ public class MediaDetail extends AppCompatActivity {
     private void mediaDelete() {
         String mediaLocation = mediaDownloadPath + "/" + libraryItems.get(mediaIndex);
         String metaDataDescription = mediaMetadataPath + "/" + title.getText() + ".description";
-        String thumbnailLocation = mediaThumbnailPath + "/" + title.getText();
         try {
             File mediaPath = new File(mediaLocation);
             File descriptionPath = new File(metaDataDescription);
-            File thumbnailPath = new File(thumbnailLocation);
+            File thumbnailPath = new File(mediaThumbnailPath);
             File[] thumbnailList = thumbnailPath.listFiles();
 
             if (mediaPath.exists() && descriptionPath.exists()) {
-                mediaPath.delete();
                 MediaJSONController info = new MediaJSONController(mediaMetadataPath);
                 if(info.getCount(info.getMediaID(libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')))) == 0) {
-                    descriptionPath.delete();
-                    for (File file : thumbnailList) {
-                        if (file.getName().substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')).equals(info.getMediaID(libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.'))))) {
-                            file.delete();
+                    for (File thumbnail : thumbnailList) {
+                        if (thumbnail.getName().substring(0, thumbnail.getName().lastIndexOf('.')).equals(libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')))) {
+                            descriptionPath.delete();
+                            thumbnail.delete();
                             break;
                         }
+                        throw new FileNotFoundException();
                     }
                 }
+                mediaPath.delete();
                 info.deleteMediaMetadata(mediaID);
                 mediaDeleted = true;
                 returnToLibrary();

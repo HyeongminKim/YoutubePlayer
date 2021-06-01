@@ -79,16 +79,12 @@ public class MediaJSONController {
                 source.put(targetID, output);
             }
         } else {
-            input = new JSONObject(json);
-
             if(source.getJSONObject(targetID).getInt("COUNT") > 0) {
                 source.getJSONObject(targetID).put("COUNT", source.getJSONObject(targetID).getInt("COUNT") - 1);
             } else {
-                Log.println(Log.DEBUG, "CAT", input.toString());
-                input.remove(targetID);
-                Log.println(Log.DEBUG, "JSON_DEL", input.toString());
-
-                source = new JSONObject(json);
+                Log.println(Log.DEBUG, "CAT", source.toString());
+                source.remove(targetID);
+                Log.println(Log.DEBUG, "JSON_DEL", source.toString());
             }
         }
         FileOutputStream writer = new FileOutputStream(metadataPath, false);
