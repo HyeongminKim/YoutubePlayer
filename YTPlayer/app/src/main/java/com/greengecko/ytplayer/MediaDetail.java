@@ -30,7 +30,8 @@ import java.util.ArrayList;
 public class MediaDetail extends AppCompatActivity {
     private Button delete, origin, play;
 
-    private String mediaDownloadPath, mediaMetadataPath, mediaURL, mediaID;
+    private TextView title;
+    private String mediaDownloadPath, mediaMetadataPath, mediaThumbnailPath, mediaURL, mediaID;
     private ArrayList<String> libraryItems;
     private int mediaIndex;
     private boolean mediaDeleted;
@@ -46,11 +47,12 @@ public class MediaDetail extends AppCompatActivity {
     }
 
     private void init() {
-        TextView title = findViewById(R.id.title);
         TextView extension = findViewById(R.id.extension);
         TextView author = findViewById(R.id.author);
         TextView detail = findViewById(R.id.detail);
         RatingBar rating = findViewById(R.id.rating);
+
+        title = findViewById(R.id.title);
 
         delete = findViewById(R.id.delete);
         origin = findViewById(R.id.show_original);
@@ -66,13 +68,14 @@ public class MediaDetail extends AppCompatActivity {
         mediaURL = intent.getExtras().getString("url");
         mediaDownloadPath = intent.getExtras().getString("download");
         mediaMetadataPath = intent.getExtras().getString("metadata");
+        mediaThumbnailPath = intent.getExtras().getString("thumbnail");
         libraryItems = intent.getExtras().getStringArrayList("library");
         mediaIndex = intent.getExtras().getInt("index");
 
         detail.setText(metadataReader());
         detail.setMovementMethod(new ScrollingMovementMethod());
 
-        String fileExtension = libraryItems.get(mediaIndex).substring(libraryItems.get(mediaIndex).lastIndexOf('.') + 1);
+        String fileExtension = intent.getExtras().getString("extension");
         extension.setText(fileExtension);
         if(fileExtension.toLowerCase().equals("mp3") || fileExtension.toLowerCase().equals("flac") || fileExtension.toLowerCase().equals("m4a") ||
                 fileExtension.toLowerCase().equals("wav")) {
@@ -127,7 +130,7 @@ public class MediaDetail extends AppCompatActivity {
     }
 
     private String metadataReader() {
-        String descriptionPath = mediaMetadataPath + "/" + libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')) + ".description";
+        String descriptionPath = mediaMetadataPath + "/" + title.getText() + ".description";
         StringBuffer buffer = new StringBuffer();
         try {
             InputStream input = new FileInputStream(descriptionPath);
@@ -148,15 +151,25 @@ public class MediaDetail extends AppCompatActivity {
 
     private void mediaDelete() {
         String mediaLocation = mediaDownloadPath + "/" + libraryItems.get(mediaIndex);
-        String metaDataDescription = mediaMetadataPath + "/" + libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')) + ".description";
+        String metaDataDescription = mediaMetadataPath + "/" + title.getText() + ".description";
+        String thumbnailLocation = mediaThumbnailPath + "/" + title.getText();
         try {
             File mediaPath = new File(mediaLocation);
             File descriptionPath = new File(metaDataDescription);
+            File thumbnailPath = new File(thumbnailLocation);
+            File[] thumbnailList = thumbnailPath.listFiles();
+
             if (mediaPath.exists() && descriptionPath.exists()) {
                 mediaPath.delete();
                 MediaJSONController info = new MediaJSONController(mediaMetadataPath);
                 if(info.getCount(info.getMediaID(libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')))) == 0) {
                     descriptionPath.delete();
+                    for (File file : thumbnailList) {
+                        if (file.getName().substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')).equals(info.getMediaID(libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.'))))) {
+                            file.delete();
+                            break;
+                        }
+                    }
                 }
                 info.deleteMediaMetadata(mediaID);
                 mediaDeleted = true;

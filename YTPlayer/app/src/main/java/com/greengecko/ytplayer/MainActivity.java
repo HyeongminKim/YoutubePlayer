@@ -5,6 +5,7 @@ import android.app.TabActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -58,7 +59,7 @@ public class MainActivity extends TabActivity {
     private CompositeDisposable   compositeDisposable;
     private InputMethodManager    inputMethod;
 
-    private ArrayList<String>     libraryItems;
+    private LibraryListAdapter    libraryAdapter;
     private String[]              convertibleItems;
     private boolean               initialized;
 
@@ -104,7 +105,7 @@ public class MainActivity extends TabActivity {
         visitYoutubeDl = findViewById(R.id.visitYTdl);
         visitDependence = findViewById(R.id.visitDependence);
 
-        libraryItems = new ArrayList<>();
+        libraryAdapter = new LibraryListAdapter();
         convertibleItems = new String[] {getString(R.string.choose), "mp4", "m4a", "3gp", "flac", "mp3", "mkv", "wav", "ogg", "webm", "gif"};
         compositeDisposable = new CompositeDisposable();
 
@@ -236,8 +237,8 @@ public class MainActivity extends TabActivity {
                 if(initialized) {
                     MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
                     try {
-                        String target = libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.'));
-                        if (!getMediaInfo(info.getURL(info.getMediaID(target), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(info.getMediaID(target), "TITLE"))) {
+                        String targetName = libraryAdapter.getTitle(position);
+                        if (!getMediaInfo(info.getURL(info.getMediaID(targetName), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(info.getMediaID(targetName), "TITLE"))) {
                             throw new NullPointerException();
                         }
                     } catch (Exception e) {
@@ -249,7 +250,7 @@ public class MainActivity extends TabActivity {
                     Toast.makeText(getApplicationContext(), getText(R.string.failToParseMediaInfo), Toast.LENGTH_SHORT).show();
                 }
                 Intent intent = new Intent(getApplicationContext(), MediaPlayer.class);
-                intent.putExtra("src", getMediaDownloadPath().getPath() + "/" + libraryItems.get(position));
+                intent.putExtra("src", getMediaDownloadPath().getPath() + "/" + libraryAdapter.getFileName(position));
                 startActivity(intent);
             }
         });
@@ -259,19 +260,25 @@ public class MainActivity extends TabActivity {
                 if(initialized) {
                     MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
                     try {
-                        String target = libraryItems.get(position).substring(0, libraryItems.get(position).lastIndexOf('.'));
-                        if (!getMediaInfo(info.getURL(info.getMediaID(target), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(info.getMediaID(target), "TITLE"))) {
+                        String targetName = libraryAdapter.getTitle(position);
+                        if (!getMediaInfo(info.getURL(info.getMediaID(targetName), "URL")).getTitle().replaceAll("[|\\\\?*<\":>/]", "_").equals(info.getString(info.getMediaID(targetName), "TITLE"))) {
                             throw new NullPointerException();
                         }
+                        ArrayList<String> library = new ArrayList<>();
+                        for (int i = 0; i < libraryAdapter.getCount(); i++) {
+                            library.add(libraryAdapter.getFileName(i));
+                        }
                         Intent intent = new Intent(getApplicationContext(), MediaDetail.class);
-                        intent.putExtra("title", info.getString(info.getMediaID(target), "TITLE"));
-                        intent.putExtra("author", info.getString(info.getMediaID(target), "UPLOADER"));
-                        intent.putExtra("rating", info.getRating(info.getMediaID(target)));
-                        intent.putExtra("url", info.getURL(info.getMediaID(target), "URL"));
-                        intent.putExtra("id", info.getMediaID(target));
+                        intent.putExtra("title", targetName);
+                        intent.putExtra("author", libraryAdapter.getUploader(position));
+                        intent.putExtra("rating", info.getRating(info.getMediaID(targetName)));
+                        intent.putExtra("url", info.getURL(info.getMediaID(targetName), "URL"));
+                        intent.putExtra("id", info.getMediaID(targetName));
+                        intent.putExtra("extension", libraryAdapter.getExtension(position));
                         intent.putExtra("download", getMediaDownloadPath().getAbsolutePath());
                         intent.putExtra("metadata", getMediaMetadataPath().getAbsolutePath());
-                        intent.putExtra("library", libraryItems);
+                        intent.putExtra("thumbnail", getMediaThumbnailPath().getAbsolutePath());
+                        intent.putExtra("library", library);
                         intent.putExtra("index", position);
                         startActivityForResult(intent, 100);
                     } catch (Exception e) {
@@ -343,12 +350,19 @@ public class MainActivity extends TabActivity {
             goExplore.setVisibility(View.GONE);
         }
 
-        libraryItems.clear();
+        libraryAdapter.clearItem();
+        MediaJSONController info = new MediaJSONController(getMediaMetadataPath().getAbsolutePath());
         for (File file : files) {
-            libraryItems.add(file.getName());
+            File[] images = getMediaThumbnailPath().listFiles();
+            for(File image : images) {
+                String parsedImageName = image.getName().substring(0, image.getName().lastIndexOf('.'));
+                String parsedFileName = file.getName().substring(0, file.getName().lastIndexOf('.'));
+                if(parsedImageName.equals(parsedFileName)) {
+                    libraryAdapter.addItem(BitmapFactory.decodeFile(image.getAbsolutePath()), file.getName(), info.getString(info.getMediaID(parsedFileName), "UPLOADER"), file.getName().substring(file.getName().lastIndexOf('.') + 1));
+                    break;
+                }
+            }
         }
-
-        ArrayAdapter<String> libraryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, libraryItems);
         library.setAdapter(libraryAdapter);
     }
 
@@ -459,6 +473,40 @@ public class MainActivity extends TabActivity {
         return path;
     }
 
+    private File getMediaThumbnailPath() {
+        File path = new File(getApplicationContext().getFilesDir(), "thumbnail");
+        if (!path.exists()) {
+            path.mkdir();
+        }
+        return path;
+    }
+
+    private void getMediaThumbnail(@NonNull String url) {
+        File path = getMediaThumbnailPath();
+        YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
+        request.addOption("-o", path.getAbsolutePath() + "/%(title)s.%(ext)s");
+        request.addOption("--write-thumbnail");
+        request.addOption("--skip-download");
+
+        Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().execute(request, callback))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(youtubeDLResponse -> {
+                    Toast.makeText(getApplicationContext(), getText(R.string.downloadSuccess), Toast.LENGTH_SHORT).show();
+                    downloadInfo.setVisibility(View.GONE);
+                    downloadProgress.setVisibility(View.GONE);
+                    exploreInput.setText(null);
+                }, e -> {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();
+                    downloadInfo.setVisibility(View.GONE);
+                    downloadProgress.setVisibility(View.GONE);
+                    exploreInput.setText(null);
+                    mediaDeleteRecent(getMediaInfo(url).getTitle());
+                });
+        compositeDisposable.add(disposable);
+    }
+
     private void getMediaMetadata(@NonNull String url) {
         File path = getMediaMetadataPath();
         YoutubeDLRequest request = new YoutubeDLRequest(url.trim());
@@ -481,12 +529,7 @@ public class MainActivity extends TabActivity {
         Disposable disposable = Observable.fromCallable(() -> YoutubeDL.getInstance().execute(request, callback))
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(youtubeDLResponse -> {
-                Toast.makeText(getApplicationContext(), getText(R.string.downloadSuccess), Toast.LENGTH_SHORT).show();
-                downloadInfo.setVisibility(View.GONE);
-                downloadProgress.setVisibility(View.GONE);
-                exploreInput.setText(null);
-            }, e -> {
+            .subscribe(youtubeDLResponse -> getMediaThumbnail(url), e -> {
                 e.printStackTrace();
                 Toast.makeText(getApplicationContext(), getText(R.string.downloadFail), Toast.LENGTH_SHORT).show();
                 downloadInfo.setVisibility(View.GONE);
