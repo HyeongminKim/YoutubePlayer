@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -161,12 +162,18 @@ public class MediaDetail extends AppCompatActivity {
             if (mediaPath.exists() && descriptionPath.exists()) {
                 MediaJSONController info = new MediaJSONController(mediaMetadataPath);
                 if(info.getCount(info.getMediaID(libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')))) == 0) {
+                    boolean fileExist = false;
                     for (File thumbnail : thumbnailList) {
+                        Log.println(Log.DEBUG, "DEL_TAR",thumbnail.getName().substring(0, thumbnail.getName().lastIndexOf('.')));
+                        Log.println(Log.DEBUG, "DEL_THUM",libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')));
                         if (thumbnail.getName().substring(0, thumbnail.getName().lastIndexOf('.')).equals(libraryItems.get(mediaIndex).substring(0, libraryItems.get(mediaIndex).lastIndexOf('.')))) {
                             descriptionPath.delete();
                             thumbnail.delete();
+                            fileExist = true;
                             break;
                         }
+                    }
+                    if(!fileExist) {
                         throw new FileNotFoundException();
                     }
                 }
