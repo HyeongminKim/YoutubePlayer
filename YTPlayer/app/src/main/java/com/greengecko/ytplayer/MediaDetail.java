@@ -28,13 +28,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class MediaDetail extends AppCompatActivity {
-    private Button delete, origin, play;
+    private Button             delete, origin, play;
 
-    private TextView title;
-    private String mediaDownloadPath, mediaMetadataPath, mediaThumbnailPath, mediaURL, mediaID;
-    private ArrayList<String> libraryItems;
-    private int mediaIndex;
-    private boolean mediaDeleted;
+    private TextView           title;
+    private String             mediaDownloadPath, mediaMetadataPath, mediaThumbnailPath, mediaURL, mediaID;
+    private ArrayList<String>  libraryItems;
+    private int                mediaIndex;
+    private boolean            mediaDeleted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
